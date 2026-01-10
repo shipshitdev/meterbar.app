@@ -2,6 +2,7 @@ import Foundation
 
 enum ServiceType: String, Codable, CaseIterable, Identifiable {
     case claude = "Claude"
+    case claudeCode = "Claude Code"
     case openai = "OpenAI"
     case cursor = "Cursor"
 
@@ -9,7 +10,8 @@ enum ServiceType: String, Codable, CaseIterable, Identifiable {
 
     var displayName: String {
         switch self {
-        case .claude: return "Claude"
+        case .claude: return "Claude API"
+        case .claudeCode: return "Claude Code"
         case .openai: return "OpenAI"
         case .cursor: return "Cursor"
         }
@@ -18,6 +20,7 @@ enum ServiceType: String, Codable, CaseIterable, Identifiable {
     var iconName: String {
         switch self {
         case .claude: return "sparkles"
+        case .claudeCode: return "terminal"
         case .openai: return "brain"
         case .cursor: return "cursorarrow.click"
         }

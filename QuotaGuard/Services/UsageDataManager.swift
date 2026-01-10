@@ -10,6 +10,8 @@ class UsageDataManager: ObservableObject {
     @Published var lastError: Error?
 
     private let claudeService = ClaudeService.shared
+    private let claudeCodeService = ClaudeCodeLocalService.shared
+    private let cursorService = CursorLocalService.shared
     private let openaiService = OpenAIService.shared
     private let authManager = AuthenticationManager.shared
 
@@ -39,6 +41,26 @@ class UsageDataManager: ObservableObject {
             }
         }
 
+        // Fetch Claude Code metrics (local files)
+        if claudeCodeService.hasAccess {
+            do {
+                let metrics = try await claudeCodeService.fetchUsageMetrics()
+                newMetrics[.claudeCode] = metrics
+                print("[UsageDataManager] Successfully fetched Claude Code metrics")
+            } catch {
+                lastError = error
+                print("[UsageDataManager] Failed to fetch Claude Code metrics: \(error)")
+                if let serviceError = error as? ServiceError {
+                    print("[UsageDataManager] Claude Code error details: \(serviceError.localizedDescription)")
+                }
+                // Preserve cached data if available (graceful degradation)
+                if let cachedMetrics = self.metrics[.claudeCode] {
+                    newMetrics[.claudeCode] = cachedMetrics
+                    print("[UsageDataManager] Using cached Claude Code metrics due to fetch failure")
+                }
+            }
+        }
+
         // Fetch OpenAI metrics
         if authManager.isOpenAIAuthenticated {
             do {
@@ -51,6 +73,14 @@ class UsageDataManager: ObservableObject {
         }
 
         // Note: Cursor doesn't have an API, so we don't fetch metrics for it
+        
+        // Merge new metrics with existing cached metrics for services that failed to fetch (graceful degradation)
+        for service in ServiceType.allCases {
+            if newMetrics[service] == nil, let cachedMetric = self.metrics[service] {
+                newMetrics[service] = cachedMetric
+                print("[UsageDataManager] Preserving cached \(service.displayName) metrics after refreshAll")
+            }
+        }
 
         metrics = newMetrics
         saveCachedData()
@@ -71,21 +101,70 @@ class UsageDataManager: ObservableObject {
                     throw ServiceError.notAuthenticated
                 }
                 newMetrics = try await claudeService.fetchUsageMetrics()
+            case .claudeCode:
+                guard claudeCodeService.hasAccess else {
+                    throw ServiceError.notAuthenticated
+                }
+                do {
+                    newMetrics = try await claudeCodeService.fetchUsageMetrics()
+                    print("[UsageDataManager] Successfully refreshed Claude Code metrics")
+                } catch {
+                    // On individual refresh, preserve cached data if fetch fails (graceful degradation)
+                    if let cachedMetric = metrics[service] {
+                        print("[UsageDataManager] Claude Code refresh failed, preserving cached data: \(error)")
+                        newMetrics = cachedMetric
+                        // Don't throw - preserve cache but still set lastError below
+                        lastError = error
+                    } else {
+                        throw error
+                    }
+                }
             case .openai:
                 guard authManager.isOpenAIAuthenticated else {
                     throw ServiceError.notAuthenticated
                 }
                 newMetrics = try await openaiService.fetchUsageMetrics()
             case .cursor:
-                throw ServiceError.apiError("Cursor does not provide a usage API")
+                guard cursorService.hasAccess else {
+                    throw ServiceError.notAuthenticated
+                }
+                do {
+                    newMetrics = try await cursorService.fetchUsageMetrics()
+                    print("[UsageDataManager] Successfully refreshed Cursor metrics")
+                } catch {
+                    // On individual refresh, preserve cached data if fetch fails (graceful degradation)
+                    if let cachedMetric = metrics[service] {
+                        print("[UsageDataManager] Cursor refresh failed, preserving cached data: \(error)")
+                        newMetrics = cachedMetric
+                        // Don't throw - preserve cache but still set lastError below
+                        lastError = error
+                    } else {
+                        throw error
+                    }
+                }
             }
 
             metrics[service] = newMetrics
             saveCachedData()
             sharedStore.saveMetrics(metrics)
         } catch {
-            lastError = error
-            print("Failed to fetch \(service.displayName) metrics: \(error)")
+            // Only set lastError if it wasn't already set (e.g., from graceful degradation)
+            if lastError == nil {
+                lastError = error
+            }
+            print("[UsageDataManager] Failed to fetch \(service.displayName) metrics: \(error)")
+            if let serviceError = error as? ServiceError {
+                print("[UsageDataManager] \(service.displayName) error details: \(serviceError.localizedDescription)")
+            }
+            // Preserve existing cached metrics for this service on error (graceful degradation)
+            // Metrics may already be set from the instance property, so check if we need to load from cache
+            if metrics[service] == nil {
+                // Try to load from UserDefaults cache
+                if let cachedData = loadCachedMetricsFromDisk()[service] {
+                    metrics[service] = cachedData
+                    print("[UsageDataManager] Using cached \(service.displayName) metrics from disk due to fetch failure")
+                }
+            }
         }
 
         isLoading = false
@@ -98,6 +177,20 @@ class UsageDataManager: ObservableObject {
         }
 
         metrics = decoded.reduce(into: [ServiceType: UsageMetrics]()) { result, pair in
+            if let service = ServiceType(rawValue: pair.key) {
+                result[service] = pair.value
+            }
+        }
+    }
+    
+    /// Load cached metrics from disk without modifying instance state
+    private func loadCachedMetricsFromDisk() -> [ServiceType: UsageMetrics] {
+        guard let data = UserDefaults.standard.data(forKey: cacheKey),
+              let decoded = try? JSONDecoder().decode([String: UsageMetrics].self, from: data) else {
+            return [:]
+        }
+
+        return decoded.reduce(into: [ServiceType: UsageMetrics]()) { result, pair in
             if let service = ServiceType(rawValue: pair.key) {
                 result[service] = pair.value
             }

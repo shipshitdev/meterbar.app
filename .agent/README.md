@@ -24,6 +24,9 @@ This is the `.agent/` folder containing AI agent documentation, session tracking
 ├── TASKS/
 │   ├── README.md                # Task management guide
 │   └── INBOX.md                 # Quick task capture
+├── PRDs/
+│   ├── README.md                # PRD format guide
+│   └── *.md                     # Product Requirements Documents
 ├── SESSIONS/
 │   ├── README.md                # Session format guide
 │   └── TEMPLATE.md              # Session file template
@@ -44,6 +47,7 @@ This is the `.agent/` folder containing AI agent documentation, session tracking
 
 - Follow patterns in `SYSTEM/RULES.md`
 - Track tasks in `TASKS/`
+- Reference PRDs in `PRDs/` when implementing features
 - Document decisions
 
 ### After Work
@@ -64,4 +68,4 @@ swift,swiftui,macos,widgetkit
 
 ---
 
-**Last Updated:** 2025-12-29
+**Last Updated:** 2026-01-10

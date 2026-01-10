@@ -1,7 +1,7 @@
 # Sessions
 
 **Purpose:** Daily session documentation for AI continuity.
-**Last Updated:** 2025-12-29
+**Last Updated:** 2026-01-03
 
 ---
 
@@ -48,7 +48,7 @@ Add session entry with:
 
 ## Recent Sessions
 
-<!-- Quick links to recent sessions -->
+- [2026-01-03](./2026-01-03.md) - Added Swift tests and coverage script
 
 ---
 

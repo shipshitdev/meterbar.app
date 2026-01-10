@@ -1,5 +1,8 @@
 # Quota Guard
 
+![Project Type](https://img.shields.io/badge/Project-App-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+
 An open-source macOS widget (WidgetKit + menu bar) that tracks account-level usage limits from Claude, OpenAI, and Cursor dashboards.
 
 ## Features

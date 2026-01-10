@@ -4,6 +4,8 @@ import AppKit
 struct SettingsView: View {
     @StateObject private var authManager = AuthenticationManager.shared
     @StateObject private var dataManager = UsageDataManager.shared
+    @StateObject private var claudeCodeService = ClaudeCodeLocalService.shared
+    @StateObject private var cursorService = CursorLocalService.shared
 
     @State private var claudeAdminKey: String = ""
     @State private var openaiAdminKey: String = ""
@@ -43,6 +45,60 @@ struct SettingsView: View {
                 .buttonStyle(.link)
             }
 
+            Section("Claude Code (Pro/Max)") {
+                HStack {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(claudeCodeService.hasAccess ? .green : .gray)
+                    Text(claudeCodeService.hasAccess ? "Connected" : "Not Connected")
+                }
+
+                if claudeCodeService.hasAccess {
+                    if let subscriptionType = claudeCodeService.subscriptionType {
+                        HStack {
+                            Text("Plan:")
+                                .foregroundColor(.secondary)
+                            Text(subscriptionType.capitalized)
+                                .bold()
+                        }
+                        .font(.caption)
+                    }
+
+                    if let rateLimitTier = claudeCodeService.rateLimitTier {
+                        HStack {
+                            Text("Tier:")
+                                .foregroundColor(.secondary)
+                            Text(rateLimitTier.replacingOccurrences(of: "_", with: " ").capitalized)
+                        }
+                        .font(.caption)
+                    }
+
+                    Button("Refresh Status") {
+                        claudeCodeService.checkAccess()
+                        Task {
+                            await dataManager.refreshAll()
+                        }
+                    }
+                } else {
+                    Text("Automatically reads Claude Code CLI credentials from macOS Keychain.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+
+                    Text("Log in to Claude Code CLI first: run 'claude' in terminal")
+                        .font(.caption)
+                        .foregroundColor(.orange)
+
+                    Button("Check Again") {
+                        claudeCodeService.checkAccess()
+                        if claudeCodeService.hasAccess {
+                            Task {
+                                await dataManager.refreshAll()
+                            }
+                        }
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+            }
+
             Section("OpenAI") {
                 HStack {
                     Image(systemName: "checkmark.circle.fill")
@@ -74,24 +130,44 @@ struct SettingsView: View {
             }
 
             Section("Cursor") {
-                VStack(alignment: .leading, spacing: 12) {
-                    HStack {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(.orange)
-                        Text("No API Available")
-                            .foregroundColor(.secondary)
+                HStack {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(cursorService.hasAccess ? .green : .gray)
+                    Text(cursorService.hasAccess ? "Connected" : "Not Connected")
+                }
+
+                if cursorService.hasAccess {
+                    if let subscriptionType = cursorService.subscriptionType {
+                        HStack {
+                            Text("Plan:")
+                                .foregroundColor(.secondary)
+                            Text(subscriptionType.capitalized)
+                                .bold()
+                        }
+                        .font(.caption)
                     }
 
-                    Text("Cursor doesn't provide a public usage/billing API yet.")
+                    Button("Refresh Status") {
+                        cursorService.checkAccess()
+                        Task {
+                            await dataManager.refreshAll()
+                        }
+                    }
+                } else {
+                    Text("Automatically reads Cursor IDE credentials from macOS Keychain.")
                         .font(.caption)
                         .foregroundColor(.secondary)
 
-                    Button(action: {
-                        CursorService.shared.openTweetRequest()
-                    }) {
-                        HStack {
-                            Image(systemName: "bubble.left.fill")
-                            Text("Tweet @cursor_ai to request this feature")
+                    Text("Log in to Cursor IDE first: open Cursor and sign in to your account")
+                        .font(.caption)
+                        .foregroundColor(.orange)
+
+                    Button("Check Again") {
+                        cursorService.checkAccess()
+                        if cursorService.hasAccess {
+                            Task {
+                                await dataManager.refreshAll()
+                            }
                         }
                     }
                     .buttonStyle(.borderedProminent)

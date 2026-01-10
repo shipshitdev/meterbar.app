@@ -22,6 +22,7 @@ For larger tasks, create individual files:
 **Status:** Not Started / In Progress / Blocked / Complete
 **Created:** YYYY-MM-DD
 **Updated:** YYYY-MM-DD
+**Related PRD:** `../PRDs/prd-name.md` (optional)
 
 ## Description
 
@@ -31,6 +32,10 @@ What needs to be done.
 
 - [ ] Criterion 1
 - [ ] Criterion 2
+
+## Related PRD
+
+If this task implements a PRD, link to it: `../PRDs/prd-name.md`
 
 ## Notes
 

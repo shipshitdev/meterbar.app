@@ -22,6 +22,10 @@ let package = Package(
             path: "QuotaGuard",
             exclude: ["Widget"]
         ),
+        .testTarget(
+            name: "QuotaGuardTests",
+            dependencies: ["QuotaGuard"],
+            path: "QuotaGuardTests"
+        ),
     ]
 )
-
