@@ -88,9 +88,9 @@ struct WallpaperView: View {
         ZStack {
             LinearGradient(
                 colors: [
-                    Color(red: 0.12, green: 0.23, blue: 0.42),
-                    Color(red: 0.16, green: 0.44, blue: 0.62),
-                    Color(red: 0.58, green: 0.47, blue: 0.82)
+                    Color(red: 0.05, green: 0.06, blue: 0.12),
+                    Color(red: 0.09, green: 0.18, blue: 0.28),
+                    Color(red: 0.24, green: 0.14, blue: 0.35)
                 ],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
@@ -98,13 +98,13 @@ struct WallpaperView: View {
             .ignoresSafeArea()
 
             Circle()
-                .fill(Color.white.opacity(0.12))
+                .fill(Color.white.opacity(0.08))
                 .frame(width: 220, height: 220)
                 .offset(x: -100, y: -120)
                 .blur(radius: 10)
 
             Circle()
-                .fill(Color.white.opacity(0.1))
+                .fill(Color.white.opacity(0.07))
                 .frame(width: 260, height: 260)
                 .offset(x: 120, y: 130)
                 .blur(radius: 12)
@@ -194,6 +194,7 @@ struct MenuBarSnapshotView: View {
                     }
                     .padding()
                 }
+                .scrollIndicators(.hidden)
                 Divider()
                 footer
             }
@@ -413,6 +414,7 @@ struct WidgetMediumSnapshotView: View {
     var body: some View {
         ZStack {
             MacOSWidgetBackground()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             VStack(alignment: .leading, spacing: 12) {
                 Text("Quota Guard")
                     .font(.headline)
@@ -423,7 +425,7 @@ struct WidgetMediumSnapshotView: View {
             }
             .padding()
         }
-        .frame(width: 340, height: 170, alignment: .topLeading)
+        .frame(width: 340, height: 170, alignment: .center)
     }
 }
 
@@ -513,7 +515,7 @@ func makeWindow<V: View>(
     hasShadow: Bool,
     isOpaque: Bool
 ) -> NSWindow {
-    let hostingView = NSHostingView(rootView: content.environment(\.colorScheme, .light))
+    let hostingView = NSHostingView(rootView: content.environment(\.colorScheme, .dark))
     hostingView.frame = NSRect(origin: .zero, size: size)
 
     let window = NSWindow(
@@ -526,7 +528,7 @@ func makeWindow<V: View>(
     window.isOpaque = isOpaque
     window.backgroundColor = isOpaque ? .black : .clear
     window.hasShadow = hasShadow
-    window.appearance = NSAppearance(named: .aqua)
+    window.appearance = NSAppearance(named: .darkAqua)
     window.level = level
     window.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
     window.contentView = hostingView
@@ -540,6 +542,7 @@ func captureWindow(_ window: NSWindow, to url: URL) throws {
     process.arguments = [
         "-l", "\(window.windowNumber)",
         "-t", "png",
+        "-o",
         "-x",
         url.path
     ]
@@ -558,6 +561,7 @@ struct SnapshotRenderer {
     static func main() throws {
         let app = NSApplication.shared
         app.setActivationPolicy(.accessory)
+        app.appearance = NSAppearance(named: .darkAqua)
 
         guard let screen = NSScreen.main else {
             throw SnapshotError.renderFailed("No screen available for screenshots")
@@ -602,6 +606,24 @@ struct SnapshotRenderer {
 
         let menuBarSize = CGSize(width: 320, height: 500)
         let widgetSize = CGSize(width: 340, height: 170)
+        let menuBarPadding: CGFloat = 18
+        let widgetPadding: CGFloat = 24
+        let menuBarCanvasSize = CGSize(
+            width: menuBarSize.width + menuBarPadding * 2,
+            height: menuBarSize.height + menuBarPadding * 2
+        )
+        let widgetCanvasSize = CGSize(
+            width: widgetSize.width + widgetPadding * 2,
+            height: widgetSize.height + widgetPadding * 2
+        )
+        let menuBarCanvas = menuBarView
+            .padding(menuBarPadding)
+            .frame(width: menuBarCanvasSize.width, height: menuBarCanvasSize.height, alignment: .center)
+        let widgetCanvas = ZStack {
+            Color.clear
+            widgetView
+        }
+        .frame(width: widgetCanvasSize.width, height: widgetCanvasSize.height, alignment: .center)
         let backdropSize = CGSize(
             width: min(900, screen.visibleFrame.width * 0.8),
             height: min(600, screen.visibleFrame.height * 0.8)
@@ -613,11 +635,11 @@ struct SnapshotRenderer {
         let inset: CGFloat = 40
         let menuOrigin = CGPoint(
             x: backdropOrigin.x + inset,
-            y: backdropOrigin.y + backdropSize.height - menuBarSize.height - inset
+            y: backdropOrigin.y + backdropSize.height - menuBarCanvasSize.height - inset
         )
         let widgetOrigin = CGPoint(
-            x: backdropOrigin.x + backdropSize.width - widgetSize.width - inset,
-            y: backdropOrigin.y + backdropSize.height - widgetSize.height - inset
+            x: backdropOrigin.x + backdropSize.width - widgetCanvasSize.width - inset,
+            y: backdropOrigin.y + backdropSize.height - widgetCanvasSize.height - inset
         )
 
         let backdropWindow = makeWindow(
@@ -631,10 +653,10 @@ struct SnapshotRenderer {
         backdropWindow.orderFrontRegardless()
 
         let menuBarWindow = makeWindow(
-            content: menuBarView,
-            size: menuBarSize,
+            content: menuBarCanvas,
+            size: menuBarCanvasSize,
             level: .floating,
-            hasShadow: true,
+            hasShadow: false,
             isOpaque: false
         )
         menuBarWindow.setFrameOrigin(menuOrigin)
@@ -644,10 +666,10 @@ struct SnapshotRenderer {
         menuBarWindow.orderOut(nil)
 
         let widgetWindow = makeWindow(
-            content: widgetView,
-            size: widgetSize,
+            content: widgetCanvas,
+            size: widgetCanvasSize,
             level: .floating,
-            hasShadow: true,
+            hasShadow: false,
             isOpaque: false
         )
         widgetWindow.setFrameOrigin(widgetOrigin)
