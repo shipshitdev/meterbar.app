@@ -22,8 +22,8 @@ jobs:
 
       - name: Build
         run: |
-          xcodebuild -project QuotaGuard.xcodeproj \
-            -scheme QuotaGuard \
+          xcodebuild -project MeterBar.xcodeproj \
+            -scheme MeterBar \
             -configuration Debug \
             -destination 'platform=macOS' \
             CODE_SIGN_IDENTITY="-" \
@@ -33,8 +33,8 @@ jobs:
 
       - name: Run tests
         run: |
-          xcodebuild -project QuotaGuard.xcodeproj \
-            -scheme QuotaGuard \
+          xcodebuild -project MeterBar.xcodeproj \
+            -scheme MeterBar \
             -configuration Debug \
             -destination 'platform=macOS' \
             CODE_SIGN_IDENTITY="-" \

@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		5259E4402F032E77001001CF /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5259E43F2F032E77001001CF /* WidgetKit.framework */; };
 		5259E4422F032E77001001CF /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5259E4412F032E77001001CF /* SwiftUI.framework */; };
-		5259E44F2F032E78001001CF /* QuotaGuardWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5259E43D2F032E77001001CF /* QuotaGuardWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		5259E44F2F032E78001001CF /* MeterBarWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5259E43D2F032E77001001CF /* MeterBarWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -18,7 +18,7 @@
 			containerPortal = 52CFA4F82F0323EF0036036C /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 5259E43C2F032E77001001CF;
-			remoteInfo = QuotaGuardWidgetExtension;
+			remoteInfo = MeterBarWidgetExtension;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -29,7 +29,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				5259E44F2F032E78001001CF /* QuotaGuardWidgetExtension.appex in Embed Foundation Extensions */,
+				5259E44F2F032E78001001CF /* MeterBarWidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -37,34 +37,34 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		5259E43D2F032E77001001CF /* QuotaGuardWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = QuotaGuardWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		5259E43D2F032E77001001CF /* MeterBarWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MeterBarWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		5259E43F2F032E77001001CF /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		5259E4412F032E77001001CF /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
-		52CFA5002F0323EF0036036C /* QuotaGuard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QuotaGuard.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		52CFA5002F0323EF0036036C /* MeterBar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MeterBar.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		5259E4502F032E78001001CF /* Exceptions for "QuotaGuardWidget" folder in "QuotaGuardWidgetExtension" target */ = {
+		5259E4502F032E78001001CF /* Exceptions for "MeterBarWidget" folder in "MeterBarWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 5259E43C2F032E77001001CF /* QuotaGuardWidgetExtension */;
+			target = 5259E43C2F032E77001001CF /* MeterBarWidgetExtension */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		5259E4432F032E77001001CF /* QuotaGuardWidget */ = {
+		5259E4432F032E77001001CF /* MeterBarWidget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				5259E4502F032E78001001CF /* Exceptions for "QuotaGuardWidget" folder in "QuotaGuardWidgetExtension" target */,
+				5259E4502F032E78001001CF /* Exceptions for "MeterBarWidget" folder in "MeterBarWidgetExtension" target */,
 			);
-			path = QuotaGuardWidget;
+			path = MeterBarWidget;
 			sourceTree = "<group>";
 		};
-		52CFA5022F0323EF0036036C /* QuotaGuard */ = {
+		52CFA5022F0323EF0036036C /* MeterBar */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = QuotaGuard;
+			path = MeterBar;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -101,8 +101,8 @@
 		52CFA4F72F0323EF0036036C = {
 			isa = PBXGroup;
 			children = (
-				52CFA5022F0323EF0036036C /* QuotaGuard */,
-				5259E4432F032E77001001CF /* QuotaGuardWidget */,
+				52CFA5022F0323EF0036036C /* MeterBar */,
+				5259E4432F032E77001001CF /* MeterBarWidget */,
 				5259E43E2F032E77001001CF /* Frameworks */,
 				52CFA5012F0323EF0036036C /* Products */,
 			);
@@ -111,8 +111,8 @@
 		52CFA5012F0323EF0036036C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				52CFA5002F0323EF0036036C /* QuotaGuard.app */,
-				5259E43D2F032E77001001CF /* QuotaGuardWidgetExtension.appex */,
+				52CFA5002F0323EF0036036C /* MeterBar.app */,
+				5259E43D2F032E77001001CF /* MeterBarWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -120,9 +120,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		5259E43C2F032E77001001CF /* QuotaGuardWidgetExtension */ = {
+		5259E43C2F032E77001001CF /* MeterBarWidgetExtension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5259E4512F032E78001001CF /* Build configuration list for PBXNativeTarget "QuotaGuardWidgetExtension" */;
+			buildConfigurationList = 5259E4512F032E78001001CF /* Build configuration list for PBXNativeTarget "MeterBarWidgetExtension" */;
 			buildPhases = (
 				5259E4392F032E77001001CF /* Sources */,
 				5259E43A2F032E77001001CF /* Frameworks */,
@@ -133,18 +133,18 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				5259E4432F032E77001001CF /* QuotaGuardWidget */,
+				5259E4432F032E77001001CF /* MeterBarWidget */,
 			);
-			name = QuotaGuardWidgetExtension;
+			name = MeterBarWidgetExtension;
 			packageProductDependencies = (
 			);
-			productName = QuotaGuardWidgetExtension;
-			productReference = 5259E43D2F032E77001001CF /* QuotaGuardWidgetExtension.appex */;
+			productName = MeterBarWidgetExtension;
+			productReference = 5259E43D2F032E77001001CF /* MeterBarWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
-		52CFA4FF2F0323EF0036036C /* QuotaGuard */ = {
+		52CFA4FF2F0323EF0036036C /* MeterBar */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 52CFA50B2F0323F10036036C /* Build configuration list for PBXNativeTarget "QuotaGuard" */;
+			buildConfigurationList = 52CFA50B2F0323F10036036C /* Build configuration list for PBXNativeTarget "MeterBar" */;
 			buildPhases = (
 				52CFA4FC2F0323EF0036036C /* Sources */,
 				52CFA4FD2F0323EF0036036C /* Frameworks */,
@@ -157,13 +157,13 @@
 				5259E44E2F032E78001001CF /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				52CFA5022F0323EF0036036C /* QuotaGuard */,
+				52CFA5022F0323EF0036036C /* MeterBar */,
 			);
-			name = QuotaGuard;
+			name = MeterBar;
 			packageProductDependencies = (
 			);
-			productName = QuotaGuard;
-			productReference = 52CFA5002F0323EF0036036C /* QuotaGuard.app */;
+			productName = MeterBar;
+			productReference = 52CFA5002F0323EF0036036C /* MeterBar.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -184,7 +184,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 52CFA4FB2F0323EF0036036C /* Build configuration list for PBXProject "QuotaGuard" */;
+			buildConfigurationList = 52CFA4FB2F0323EF0036036C /* Build configuration list for PBXProject "MeterBar" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -198,8 +198,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				52CFA4FF2F0323EF0036036C /* QuotaGuard */,
-				5259E43C2F032E77001001CF /* QuotaGuardWidgetExtension */,
+				52CFA4FF2F0323EF0036036C /* MeterBar */,
+				5259E43C2F032E77001001CF /* MeterBarWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -241,7 +241,7 @@
 /* Begin PBXTargetDependency section */
 		5259E44E2F032E78001001CF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5259E43C2F032E77001001CF /* QuotaGuardWidgetExtension */;
+			target = 5259E43C2F032E77001001CF /* MeterBarWidgetExtension */;
 			targetProxy = 5259E44D2F032E78001001CF /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -252,7 +252,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_ENTITLEMENTS = QuotaGuardWidget/QuotaGuardWidget.entitlements;
+				CODE_SIGN_ENTITLEMENTS = MeterBarWidget/MeterBarWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = S329JK3JRB;
@@ -270,8 +270,8 @@
 				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = QuotaGuardWidget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = QuotaGuardWidget;
+				INFOPLIST_FILE = MeterBarWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = MeterBarWidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -280,7 +280,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = dev.shipshit.QuotaGuard.Widget;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.shipshit.MeterBar.Widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
@@ -297,7 +297,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_ENTITLEMENTS = QuotaGuardWidget/QuotaGuardWidget.entitlements;
+				CODE_SIGN_ENTITLEMENTS = MeterBarWidget/MeterBarWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = S329JK3JRB;
@@ -315,8 +315,8 @@
 				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = QuotaGuardWidget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = QuotaGuardWidget;
+				INFOPLIST_FILE = MeterBarWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = MeterBarWidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -325,7 +325,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = dev.shipshit.QuotaGuard.Widget;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.shipshit.MeterBar.Widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
@@ -462,7 +462,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = QuotaGuard/QuotaGuard.entitlements;
+				CODE_SIGN_ENTITLEMENTS = MeterBar/MeterBar.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -490,7 +490,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = dev.shipshit.QuotaGuard;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.shipshit.MeterBar;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				REGISTER_APP_GROUPS = YES;
@@ -508,7 +508,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = QuotaGuard/QuotaGuard.entitlements;
+				CODE_SIGN_ENTITLEMENTS = MeterBar/MeterBar.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -536,7 +536,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = dev.shipshit.QuotaGuard;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.shipshit.MeterBar;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				REGISTER_APP_GROUPS = YES;
@@ -552,7 +552,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		5259E4512F032E78001001CF /* Build configuration list for PBXNativeTarget "QuotaGuardWidgetExtension" */ = {
+		5259E4512F032E78001001CF /* Build configuration list for PBXNativeTarget "MeterBarWidgetExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5259E4522F032E78001001CF /* Debug */,
@@ -561,7 +561,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		52CFA4FB2F0323EF0036036C /* Build configuration list for PBXProject "QuotaGuard" */ = {
+		52CFA4FB2F0323EF0036036C /* Build configuration list for PBXProject "MeterBar" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				52CFA5092F0323F10036036C /* Debug */,
@@ -570,7 +570,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		52CFA50B2F0323F10036036C /* Build configuration list for PBXNativeTarget "QuotaGuard" */ = {
+		52CFA50B2F0323F10036036C /* Build configuration list for PBXNativeTarget "MeterBar" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				52CFA50C2F0323F10036036C /* Debug */,

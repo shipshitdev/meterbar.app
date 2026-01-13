@@ -2,9 +2,9 @@ import ArgumentParser
 import Foundation
 
 @main
-struct QuotaGuardCLI: ParsableCommand {
+struct MeterBarCLI: ParsableCommand {
     static let configuration = CommandConfiguration(
-        commandName: "quotaguard",
+        commandName: "meterbar",
         abstract: "Track AI coding assistant usage from the command line",
         version: "1.0.0",
         subcommands: [Usage.self, Cost.self],
@@ -28,10 +28,10 @@ struct Usage: ParsableCommand {
 
         if metrics.isEmpty {
             if json {
-                print("{\"error\": \"No cached metrics found. Open Quota Guard app to fetch data.\"}")
+                print("{\"error\": \"No cached metrics found. Open MeterBar app to fetch data.\"}")
             } else {
                 print("No cached metrics found.")
-                print("Open Quota Guard app to fetch usage data first.")
+                print("Open MeterBar app to fetch usage data first.")
             }
             return
         }
@@ -53,7 +53,7 @@ struct Usage: ParsableCommand {
     private func loadCachedMetrics() -> [String: ServiceMetrics] {
         // Try app group container first
         let containerURL = FileManager.default.containerURL(
-            forSecurityApplicationGroupIdentifier: "group.dev.shipshit.quotaguard"
+            forSecurityApplicationGroupIdentifier: "group.dev.shipshit.meterbar"
         )
 
         var metricsPath: URL?
@@ -91,7 +91,7 @@ struct Usage: ParsableCommand {
 
     private func printText(_ metrics: [String: ServiceMetrics]) {
         print("╭─────────────────────────────────────────╮")
-        print("│           Quota Guard Usage             │")
+        print("│             MeterBar Usage              │")
         print("╰─────────────────────────────────────────╯")
         print()
 
@@ -239,7 +239,7 @@ struct Cost: ParsableCommand {
 
     private func printCosts(_ costs: CostResult) {
         print("╭─────────────────────────────────────────╮")
-        print("│        Quota Guard Cost Tracker         │")
+        print("│          MeterBar Cost Tracker          │")
         print("╰─────────────────────────────────────────╯")
         print()
         print("Provider: Claude Code")

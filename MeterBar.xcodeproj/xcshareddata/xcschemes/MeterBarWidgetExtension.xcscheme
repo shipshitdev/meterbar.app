@@ -17,9 +17,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5259E43C2F032E77001001CF"
-               BuildableName = "QuotaGuardWidgetExtension.appex"
-               BlueprintName = "QuotaGuardWidgetExtension"
-               ReferencedContainer = "container:QuotaGuard.xcodeproj">
+               BuildableName = "MeterBarWidgetExtension.appex"
+               BlueprintName = "MeterBarWidgetExtension"
+               ReferencedContainer = "container:MeterBar.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -31,9 +31,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "52CFA4FF2F0323EF0036036C"
-               BuildableName = "QuotaGuard.app"
-               BlueprintName = "QuotaGuard"
-               ReferencedContainer = "container:QuotaGuard.xcodeproj">
+               BuildableName = "MeterBar.app"
+               BlueprintName = "MeterBar"
+               ReferencedContainer = "container:MeterBar.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -64,18 +64,18 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5259E43C2F032E77001001CF"
-            BuildableName = "QuotaGuardWidgetExtension.appex"
-            BlueprintName = "QuotaGuardWidgetExtension"
-            ReferencedContainer = "container:QuotaGuard.xcodeproj">
+            BuildableName = "MeterBarWidgetExtension.appex"
+            BlueprintName = "MeterBarWidgetExtension"
+            ReferencedContainer = "container:MeterBar.xcodeproj">
          </BuildableReference>
       </RemoteRunnable>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "52CFA4FF2F0323EF0036036C"
-            BuildableName = "QuotaGuard.app"
-            BlueprintName = "QuotaGuard"
-            ReferencedContainer = "container:QuotaGuard.xcodeproj">
+            BuildableName = "MeterBar.app"
+            BlueprintName = "MeterBar"
+            ReferencedContainer = "container:MeterBar.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <EnvironmentVariables>
@@ -109,9 +109,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "52CFA4FF2F0323EF0036036C"
-            BuildableName = "QuotaGuard.app"
-            BlueprintName = "QuotaGuard"
-            ReferencedContainer = "container:QuotaGuard.xcodeproj">
+            BuildableName = "MeterBar.app"
+            BlueprintName = "MeterBar"
+            ReferencedContainer = "container:MeterBar.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

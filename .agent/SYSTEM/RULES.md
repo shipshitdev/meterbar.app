@@ -1,4 +1,4 @@
-# Coding Rules - Quota Guard
+# Coding Rules - MeterBar
 
 **Purpose:** Coding standards and patterns for this project.
 **Last Updated:** 2025-12-29

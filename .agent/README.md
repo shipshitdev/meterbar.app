@@ -1,6 +1,6 @@
-# Quota Guard - Agent Documentation Hub
+# MeterBar - Agent Documentation Hub
 
-**Welcome to the Quota Guard workspace!**
+**Welcome to the MeterBar workspace!**
 
 This is the `.agent/` folder containing AI agent documentation, session tracking, and project rules.
 

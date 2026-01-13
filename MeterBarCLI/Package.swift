@@ -2,17 +2,17 @@
 import PackageDescription
 
 let package = Package(
-    name: "QuotaGuardCLI",
+    name: "MeterBarCLI",
     platforms: [.macOS(.v13)],
     products: [
-        .executable(name: "quotaguard", targets: ["QuotaGuardCLI"])
+        .executable(name: "meterbar", targets: ["MeterBarCLI"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.3.0")
     ],
     targets: [
         .executableTarget(
-            name: "QuotaGuardCLI",
+            name: "MeterBarCLI",
             dependencies: [
                 .product(name: "ArgumentParser", package: "swift-argument-parser")
             ],

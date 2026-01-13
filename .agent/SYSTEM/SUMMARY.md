@@ -1,4 +1,4 @@
-# Project Summary - Quota Guard
+# Project Summary - MeterBar
 
 **Purpose:** Quick overview of current project state.
 **Last Updated:** 2026-01-12

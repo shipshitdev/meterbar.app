@@ -32,7 +32,7 @@ jobs:
       - name: Download SHA256
         run: |
           VERSION="${{ steps.version.outputs.tag }}"
-          curl -sL "https://github.com/shipshitdev/quotaguardapp/releases/download/${VERSION}/QuotaGuard-${VERSION}.zip.sha256" -o sha256.txt
+          curl -sL "https://github.com/shipshitdev/meterbarapp/releases/download/${VERSION}/MeterBar-${VERSION}.zip.sha256" -o sha256.txt
           SHA256=$(cat sha256.txt)
           echo "SHA256: $SHA256"
           echo "sha256=$SHA256" >> $GITHUB_OUTPUT
@@ -52,19 +52,19 @@ jobs:
           SHA256="${{ steps.sha.outputs.sha256 }}"
 
           # Update version
-          sed -i "s/version \".*\"/version \"${VERSION}\"/" Casks/quotaguard.rb
+          sed -i "s/version \".*\"/version \"${VERSION}\"/" Casks/meterbar.rb
 
           # Update sha256
-          sed -i "s/sha256 \".*\"/sha256 \"${SHA256}\"/" Casks/quotaguard.rb
+          sed -i "s/sha256 \".*\"/sha256 \"${SHA256}\"/" Casks/meterbar.rb
 
           echo "Updated formula:"
-          cat Casks/quotaguard.rb
+          cat Casks/meterbar.rb
 
       - name: Commit and push
         run: |
           cd homebrew-tap
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add Casks/quotaguard.rb
-          git diff --staged --quiet || git commit -m "Update quotaguard to ${{ steps.version.outputs.tag }}"
+          git add Casks/meterbar.rb
+          git diff --staged --quiet || git commit -m "Update meterbar to ${{ steps.version.outputs.tag }}"
           git push

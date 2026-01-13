@@ -1,9 +1,9 @@
-# SwiftLint Configuration for Quota Guard
+# SwiftLint Configuration for MeterBar
 # https://github.com/realm/SwiftLint
 
 # Paths to include
 included:
-  - QuotaGuard
+  - MeterBar
 
 # Paths to exclude
 excluded:

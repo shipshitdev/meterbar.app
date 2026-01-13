@@ -23,8 +23,8 @@ jobs:
 
       - name: Build app
         run: |
-          xcodebuild -project QuotaGuard.xcodeproj \
-            -scheme QuotaGuard \
+          xcodebuild -project MeterBar.xcodeproj \
+            -scheme MeterBar \
             -configuration Release \
             -derivedDataPath build \
             -destination 'platform=macOS' \
@@ -35,31 +35,31 @@ jobs:
 
       - name: Build CLI
         run: |
-          cd QuotaGuardCLI
+          cd MeterBarCLI
           swift build -c release
-          mkdir -p ../build/Build/Products/Release/QuotaGuard.app/Contents/Helpers
-          cp .build/release/quotaguard ../build/Build/Products/Release/QuotaGuard.app/Contents/Helpers/
+          mkdir -p ../build/Build/Products/Release/MeterBar.app/Contents/Helpers
+          cp .build/release/meterbar ../build/Build/Products/Release/MeterBar.app/Contents/Helpers/
 
       - name: Create release package
         run: |
           VERSION="${{ github.ref_name }}"
 
           # Find the built app
-          APP_PATH=$(find build -name "QuotaGuard.app" -type d | head -1)
+          APP_PATH=$(find build -name "MeterBar.app" -type d | head -1)
           echo "Found app at: $APP_PATH"
 
           # Create zip using ditto (preserves attributes better than zip)
           cd $(dirname "$APP_PATH")
-          ditto -c -k --keepParent "QuotaGuard.app" "QuotaGuard-${VERSION}.zip"
+          ditto -c -k --keepParent "MeterBar.app" "MeterBar-${VERSION}.zip"
 
           # Compute SHA256
-          SHA256=$(shasum -a 256 "QuotaGuard-${VERSION}.zip" | cut -d ' ' -f 1)
+          SHA256=$(shasum -a 256 "MeterBar-${VERSION}.zip" | cut -d ' ' -f 1)
           echo "SHA256: $SHA256"
-          echo "$SHA256" > "QuotaGuard-${VERSION}.zip.sha256"
+          echo "$SHA256" > "MeterBar-${VERSION}.zip.sha256"
 
           # Move to workspace root
-          mv "QuotaGuard-${VERSION}.zip" "${{ github.workspace }}/"
-          mv "QuotaGuard-${VERSION}.zip.sha256" "${{ github.workspace }}/"
+          mv "MeterBar-${VERSION}.zip" "${{ github.workspace }}/"
+          mv "MeterBar-${VERSION}.zip.sha256" "${{ github.workspace }}/"
 
           # Set output for later steps
           echo "sha256=$SHA256" >> $GITHUB_OUTPUT
@@ -69,8 +69,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            QuotaGuard-${{ github.ref_name }}.zip
-            QuotaGuard-${{ github.ref_name }}.zip.sha256
+            MeterBar-${{ github.ref_name }}.zip
+            MeterBar-${{ github.ref_name }}.zip.sha256
           draft: false
           prerelease: false
           generate_release_notes: true
@@ -81,4 +81,4 @@ jobs:
         run: |
           echo "### Release Artifacts" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**SHA256:** \`$(cat QuotaGuard-${{ github.ref_name }}.zip.sha256)\`" >> $GITHUB_STEP_SUMMARY
+          echo "**SHA256:** \`$(cat MeterBar-${{ github.ref_name }}.zip.sha256)\`" >> $GITHUB_STEP_SUMMARY

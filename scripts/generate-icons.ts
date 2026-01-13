@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 
 /**
- * Icon Generator for Quota Guard
+ * Icon Generator for MeterBar
  *
  * Generates service icons and app icons at multiple scales.
  *
@@ -190,7 +190,7 @@ async function generateIcons(): Promise<void> {
 	for (const service of SERVICES) {
 		const folder = resolve(
 			ROOT_DIR,
-			"QuotaGuardWidget/Assets.xcassets",
+			"MeterBarWidget/Assets.xcassets",
 			service.folder
 		);
 
@@ -215,12 +215,12 @@ async function generateIcons(): Promise<void> {
 	// Generate app icons
 	console.log("\n📱 Generating app icons...");
 	const appIconFolders = [
-		resolve(ROOT_DIR, "QuotaGuard/Assets.xcassets/AppIcon.appiconset"),
-		resolve(ROOT_DIR, "QuotaGuardWidget/Assets.xcassets/AppIcon.appiconset"),
+		resolve(ROOT_DIR, "MeterBar/Assets.xcassets/AppIcon.appiconset"),
+		resolve(ROOT_DIR, "MeterBarWidget/Assets.xcassets/AppIcon.appiconset"),
 	];
 
 	for (const folder of appIconFolders) {
-		const folderName = folder.includes("QuotaGuardWidget") ? "Widget" : "Main";
+		const folderName = folder.includes("MeterBarWidget") ? "Widget" : "Main";
 		console.log(`  ${folderName} app icon:`);
 
 		for (const size of APP_ICON_SIZES) {

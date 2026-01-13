@@ -2,14 +2,14 @@
 import PackageDescription
 
 let package = Package(
-    name: "QuotaGuard",
+    name: "MeterBar",
     platforms: [
         .macOS(.v13)
     ],
     products: [
         .library(
-            name: "QuotaGuard",
-            targets: ["QuotaGuard"]
+            name: "MeterBar",
+            targets: ["MeterBar"]
         ),
     ],
     dependencies: [
@@ -17,15 +17,15 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "QuotaGuard",
+            name: "MeterBar",
             dependencies: [],
-            path: "QuotaGuard",
+            path: "MeterBar",
             exclude: ["Widget"]
         ),
         .testTarget(
-            name: "QuotaGuardTests",
-            dependencies: ["QuotaGuard"],
-            path: "QuotaGuardTests"
+            name: "MeterBarTests",
+            dependencies: ["MeterBar"],
+            path: "MeterBarTests"
         ),
     ]
 )

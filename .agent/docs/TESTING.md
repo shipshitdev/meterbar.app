@@ -1,11 +1,11 @@
 # Testing Guide
 
-This guide explains how to test the Quota Guard app.
+This guide explains how to test the MeterBar app.
 
 ## Running the App in Xcode
 
 1. **Build and Run**:
-   - Select the `QuotaGuard` scheme in Xcode
+   - Select the `MeterBar` scheme in Xcode
    - Press `Cmd+R` or click the Run button
    - The app will build and launch
 
@@ -23,7 +23,7 @@ This guide explains how to test the Quota Guard app.
 ### 2. Menu Bar Popover
 - Click the menu bar icon
 - A popover should appear showing:
-  - Header with "Quota Guard" and refresh button
+  - Header with "MeterBar" and refresh button
   - Service cards (if authenticated) or "No services connected" message
   - Settings and Quit buttons at the bottom
 
@@ -125,7 +125,7 @@ If you have access to real credentials:
 
 ### Check App Status
 - Open Activity Monitor
-- Search for "QuotaGuard"
+- Search for "MeterBar"
 - Verify the app is running
 
 ### Menu Bar Not Showing?

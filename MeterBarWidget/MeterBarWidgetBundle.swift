@@ -1,6 +1,6 @@
 //
-//  QuotaGuardWidgetBundle.swift
-//  QuotaGuardWidget
+//  MeterBarWidgetBundle.swift
+//  MeterBarWidget
 //
 //  Created by Genfeed AI on 29/12/2025.
 //
@@ -9,7 +9,7 @@ import WidgetKit
 import SwiftUI
 
 @main
-struct QuotaGuardWidgetBundle: WidgetBundle {
+struct MeterBarWidgetBundle: WidgetBundle {
     var body: some Widget {
         UsageWidget()
     }

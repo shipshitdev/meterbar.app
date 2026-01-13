@@ -1,6 +1,6 @@
 # Xcode Project Setup
 
-This guide explains how to set up the Xcode project for Quota Guard.
+This guide explains how to set up the Xcode project for MeterBar.
 
 ## Creating the Xcode Project
 
@@ -10,7 +10,7 @@ This guide explains how to set up the Xcode project for Quota Guard.
 2. File > New > Project
 3. Select "macOS" > "App"
 4. Fill in:
-   - Product Name: `QuotaGuard`
+   - Product Name: `MeterBar`
    - Team: Your development team
    - Organization Identifier: `com.agenticindiedev`
    - Interface: SwiftUI
@@ -30,11 +30,11 @@ swift package generate-xcodeproj
 
 ### 1. Add App Groups Capability
 
-1. Select the `QuotaGuard` target
+1. Select the `MeterBar` target
 2. Go to "Signing & Capabilities"
 3. Click "+ Capability"
 4. Add "App Groups"
-5. Create/select group: `group.com.agenticindiedev.quotaguard`
+5. Create/select group: `group.com.agenticindiedev.meterbar`
 6. Enable it
 
 ### 2. Add Widget Extension Target
@@ -43,18 +43,18 @@ swift package generate-xcodeproj
 2. Select "Widget Extension"
 3. Name: `UsageWidgetExtension`
 4. Include Configuration Intent: No
-5. Add to target: `QuotaGuard`
+5. Add to target: `MeterBar`
 
 ### 3. Configure Widget Extension
 
 1. Select the `UsageWidgetExtension` target
 2. Go to "Signing & Capabilities"
-3. Add the same App Group: `group.com.agenticindiedev.quotaguard`
+3. Add the same App Group: `group.com.agenticindiedev.meterbar`
 4. Set Deployment Target to macOS 13.0
 
 ### 4. Add Source Files
 
-Add all Swift files from `QuotaGuard/` to the main app target:
+Add all Swift files from `MeterBar/` to the main app target:
 - Models/
 - Services/
 - Views/
@@ -101,7 +101,7 @@ Add to Info.plist:
 
 ## Build and Run
 
-1. Select the `QuotaGuard` scheme
+1. Select the `MeterBar` scheme
 2. Press `Cmd+R` to build and run
 3. The app will appear in the menu bar
 

@@ -1,6 +1,6 @@
 # SYSTEM - Core Documentation
 
-This folder contains the core documentation for the Quota Guard project.
+This folder contains the core documentation for the MeterBar project.
 
 ## Contents
 

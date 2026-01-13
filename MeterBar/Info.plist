@@ -31,6 +31,6 @@
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.utilities</string>
 	<key>CFBundleDisplayName</key>
-	<string>QuotaGuard</string>
+	<string>MeterBar</string>
 </dict>
 </plist>

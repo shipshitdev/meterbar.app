@@ -1,4 +1,4 @@
-# Architecture - Quota Guard
+# Architecture - MeterBar
 
 **Purpose:** Document what IS implemented (not what WILL BE).
 **Last Updated:** 2025-01-27
@@ -7,11 +7,11 @@
 
 ## Overview
 
-Quota Guard is a macOS menu bar application with WidgetKit widgets that tracks account-level usage limits from Claude, OpenAI, and Cursor dashboards. The app provides real-time usage monitoring, notifications when approaching limits, and secure credential storage using macOS Keychain.
+MeterBar is a macOS menu bar application with WidgetKit widgets that tracks account-level usage limits from Claude, OpenAI, and Cursor dashboards. The app provides real-time usage monitoring, notifications when approaching limits, and secure credential storage using macOS Keychain.
 
 The application consists of two main targets:
-1. **QuotaGuard** - Main menu bar app with settings and popover
-2. **QuotaGuardWidget** - WidgetKit extension for Notification Center widgets
+1. **MeterBar** - Main menu bar app with settings and popover
+2. **MeterBarWidget** - WidgetKit extension for Notification Center widgets
 
 ---
 
@@ -32,10 +32,10 @@ The application consists of two main targets:
 ## Project Structure
 
 ```
-quotaguardapp/
-├── QuotaGuard/                  # Main app target
+meterbarapp/
+├── MeterBar/                  # Main app target
 │   ├── App/
-│   │   └── QuotaGuardApp.swift  # App entry point, menu bar setup
+│   │   └── MeterBarApp.swift  # App entry point, menu bar setup
 │   ├── Models/
 │   │   ├── ServiceType.swift    # Enum: Claude, OpenAI, Cursor
 │   │   ├── UsageLimit.swift     # Usage limit with percentage calculations
@@ -51,10 +51,10 @@ quotaguardapp/
 │   └── Views/
 │       ├── SettingsView.swift   # Settings window
 │       └── MenuBarView.swift    # Menu bar popover
-├── QuotaGuardWidget/            # Widget extension target
-│   ├── QuotaGuardWidgetBundle.swift  # Widget bundle entry
+├── MeterBarWidget/            # Widget extension target
+│   ├── MeterBarWidgetBundle.swift  # Widget bundle entry
 │   └── UsageWidget.swift        # Widget views (Small/Medium/Large)
-├── QuotaGuard.xcodeproj/        # Xcode project
+├── MeterBar.xcodeproj/        # Xcode project
 ├── Package.swift                # Swift Package Manager manifest
 └── .agent/                      # AI documentation
 ```
@@ -63,10 +63,10 @@ quotaguardapp/
 
 ## Key Components
 
-### App Entry Point (`QuotaGuardApp.swift`)
+### App Entry Point (`MeterBarApp.swift`)
 
 **Purpose:** Initialize app, set up menu bar, configure notifications
-**Location:** `QuotaGuard/App/QuotaGuardApp.swift`
+**Location:** `MeterBar/App/MeterBarApp.swift`
 **Dependencies:** SwiftUI App protocol, NSApplication
 
 **Key Responsibilities:**
@@ -160,7 +160,7 @@ quotaguardapp/
 #### SharedDataStore (`Services/SharedDataStore.swift`)
 **Purpose:** App Groups shared storage for widget extension
 **Pattern:** Singleton
-**App Group:** `group.com.agenticindiedev.quotaguard`
+**App Group:** `group.com.agenticindiedev.meterbar`
 
 **Methods:**
 - `saveMetrics(_:)` - Save metrics to shared UserDefaults
@@ -187,7 +187,7 @@ quotaguardapp/
 
 ### Widget Extension
 
-#### UsageWidget (`QuotaGuardWidget/UsageWidget.swift`)
+#### UsageWidget (`MeterBarWidget/UsageWidget.swift`)
 **Purpose:** WidgetKit widget implementation
 **Sizes:** Small, Medium, Large
 **Features:**
@@ -300,7 +300,7 @@ quotaguardapp/
 
 ### App Groups
 
-**Identifier:** `group.com.agenticindiedev.quotaguard`
+**Identifier:** `group.com.agenticindiedev.meterbar`
 
 **Purpose:** Share data between main app and widget extension
 
@@ -312,9 +312,9 @@ quotaguardapp/
 ### Keychain Access
 
 **Keychain Service Names:**
-- `com.agenticindiedev.quotaguard.claude`
-- `com.agenticindiedev.quotaguard.openai`
-- `com.agenticindiedev.quotaguard.cursor`
+- `com.agenticindiedev.meterbar.claude`
+- `com.agenticindiedev.meterbar.openai`
+- `com.agenticindiedev.meterbar.cursor`
 
 **Key Names:**
 - `sessionKey` (Claude)
@@ -341,12 +341,12 @@ quotaguardapp/
 
 1. **Open Xcode:**
    ```bash
-   open QuotaGuard.xcodeproj
+   open MeterBar.xcodeproj
    ```
 
 2. **Select Scheme:**
-   - `QuotaGuard` - Main app
-   - `QuotaGuardWidget` - Widget extension
+   - `MeterBar` - Main app
+   - `MeterBarWidget` - Widget extension
 
 3. **Build and Run:**
    - Press `Cmd+R` to build and run

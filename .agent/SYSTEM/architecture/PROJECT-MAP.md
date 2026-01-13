@@ -1,4 +1,4 @@
-# Project Map - Quota Guard
+# Project Map - MeterBar
 
 **Purpose:** Quick reference for project structure and responsibilities.
 **Last Updated:** 2025-01-27
@@ -8,18 +8,18 @@
 ## Directory Overview
 
 ```
-quotaguardapp/
+meterbarapp/
 ├── .agent/                      # AI documentation (you are here)
-├── QuotaGuard/                  # Main app target
+├── MeterBar/                  # Main app target
 │   ├── App/
-│   │   └── QuotaGuardApp.swift  # App entry point
+│   │   └── MeterBarApp.swift  # App entry point
 │   ├── Models/                  # Data models
 │   ├── Services/                # Business logic
 │   └── Views/                   # UI components
-├── QuotaGuardWidget/            # Widget extension target
-│   ├── QuotaGuardWidgetBundle.swift
+├── MeterBarWidget/            # Widget extension target
+│   ├── MeterBarWidgetBundle.swift
 │   └── UsageWidget.swift
-├── QuotaGuard.xcodeproj/        # Xcode project
+├── MeterBar.xcodeproj/        # Xcode project
 ├── Package.swift                 # Swift Package Manager
 └── README.md
 ```
@@ -28,13 +28,13 @@ quotaguardapp/
 
 ## Key Directories
 
-### `/QuotaGuard/App/`
+### `/MeterBar/App/`
 **Purpose:** App entry point and lifecycle
 **Patterns:** SwiftUI App protocol, NSApplication
 **Files:**
-- `QuotaGuardApp.swift` - Main app, menu bar setup
+- `MeterBarApp.swift` - Main app, menu bar setup
 
-### `/QuotaGuard/Models/`
+### `/MeterBar/Models/`
 **Purpose:** Data models and types
 **Patterns:** Swift structs, enums, Codable
 **Files:**
@@ -42,7 +42,7 @@ quotaguardapp/
 - `UsageLimit.swift` - Usage limit model
 - `UsageMetrics.swift` - Unified usage data
 
-### `/QuotaGuard/Services/`
+### `/MeterBar/Services/`
 **Purpose:** Business logic and API clients
 **Patterns:** Singleton pattern, ObservableObject, async/await
 **Files:**
@@ -54,18 +54,18 @@ quotaguardapp/
 - `UsageDataManager.swift` - Data management
 - `SharedDataStore.swift` - App Groups storage
 
-### `/QuotaGuard/Views/`
+### `/MeterBar/Views/`
 **Purpose:** SwiftUI views
 **Patterns:** SwiftUI views, @ObservedObject
 **Files:**
 - `SettingsView.swift` - Settings window
 - `MenuBarView.swift` - Menu bar popover
 
-### `/QuotaGuardWidget/`
+### `/MeterBarWidget/`
 **Purpose:** WidgetKit extension
 **Patterns:** Widget protocol, TimelineProvider
 **Files:**
-- `QuotaGuardWidgetBundle.swift` - Widget bundle
+- `MeterBarWidgetBundle.swift` - Widget bundle
 - `UsageWidget.swift` - Widget views
 
 ---
@@ -74,7 +74,7 @@ quotaguardapp/
 
 | Type | Pattern | Example |
 |------|---------|---------|
-| App Entry | `*App.swift` | `QuotaGuardApp.swift` |
+| App Entry | `*App.swift` | `MeterBarApp.swift` |
 | Model | `*.swift` in Models/ | `UsageMetrics.swift` |
 | Service | `*Service.swift` or `*Manager.swift` | `ClaudeService.swift`, `KeychainManager.swift` |
 | View | `*View.swift` | `SettingsView.swift` |
@@ -86,8 +86,8 @@ quotaguardapp/
 
 | File | Purpose | Called By |
 |------|---------|-----------|
-| `QuotaGuard/App/QuotaGuardApp.swift` | App entry point | macOS system |
-| `QuotaGuardWidget/QuotaGuardWidgetBundle.swift` | Widget bundle | WidgetKit |
+| `MeterBar/App/MeterBarApp.swift` | App entry point | macOS system |
+| `MeterBarWidget/MeterBarWidgetBundle.swift` | Widget bundle | WidgetKit |
 
 ---
 
@@ -97,7 +97,7 @@ quotaguardapp/
 
 | File | Purpose | Key Classes/Structs |
 |------|---------|---------------------|
-| `QuotaGuardApp.swift` | App lifecycle, menu bar | `QuotaGuardApp` (App) |
+| `MeterBarApp.swift` | App lifecycle, menu bar | `MeterBarApp` (App) |
 
 ### Model Files
 
@@ -130,7 +130,7 @@ quotaguardapp/
 
 | File | Purpose | Key Types |
 |------|---------|-----------|
-| `QuotaGuardWidgetBundle.swift` | Widget bundle | `QuotaGuardWidgetBundle` |
+| `MeterBarWidgetBundle.swift` | Widget bundle | `MeterBarWidgetBundle` |
 | `UsageWidget.swift` | Widget views | `UsageWidget`, `SmallWidgetView`, `MediumWidgetView`, `LargeWidgetView` |
 
 ---
@@ -138,7 +138,7 @@ quotaguardapp/
 ## Module Relationships
 
 ```
-QuotaGuardApp
+MeterBarApp
   ├──→ MenuBarView
   │     └──→ UsageDataManager (ObservableObject)
   │           ├──→ ClaudeService
@@ -153,7 +153,7 @@ QuotaGuardApp
   └──→ UsageDataManager
         └──→ SharedDataStore (App Groups)
 
-QuotaGuardWidget
+MeterBarWidget
   └──→ UsageWidget
         └──→ SharedDataStore (App Groups)
 ```
@@ -165,7 +165,7 @@ QuotaGuardWidget
 | File | Purpose | Key Settings |
 |------|---------|--------------|
 | `Package.swift` | Swift Package Manager | Dependencies, targets |
-| `QuotaGuard.xcodeproj/` | Xcode project | Targets, capabilities, signing |
+| `MeterBar.xcodeproj/` | Xcode project | Targets, capabilities, signing |
 | `Info.plist` | App metadata | Bundle ID, version |
 
 ---
@@ -174,9 +174,9 @@ QuotaGuardWidget
 
 | Capability | Purpose | Targets |
 |------------|---------|---------|
-| App Groups | Data sharing | QuotaGuard, QuotaGuardWidget |
-| Keychain Sharing | Credential access | QuotaGuard |
-| UserNotifications | Alerts | QuotaGuard |
+| App Groups | Data sharing | MeterBar, MeterBarWidget |
+| Keychain Sharing | Credential access | MeterBar |
+| UserNotifications | Alerts | MeterBar |
 
 ---
 

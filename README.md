@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="docs/logo.svg" alt="Quota Guard" width="128" height="128">
+  <img src="docs/logo.svg" alt="MeterBar" width="128" height="128">
 </p>
 
-<h1 align="center">Quota Guard</h1>
+<h1 align="center">MeterBar</h1>
 
 <p align="center">
   <strong>Track your AI coding assistant usage limits from the menu bar</strong>
@@ -21,7 +21,7 @@
 
 ---
 
-> **Note**: Quota Guard is currently in active development. The app is not yet available on the Mac App Store but will be published soon. For now, you can build from source or download pre-built binaries from the Releases page.
+> **Note**: MeterBar is currently in active development. The app is not yet available on the Mac App Store but will be published soon. For now, you can build from source or download pre-built binaries from the Releases page.
 
 A lightweight macOS menu bar app that monitors Claude Code, Codex CLI, and Cursor usage at a glance.
 
@@ -57,21 +57,21 @@ A lightweight macOS menu bar app that monitors Claude Code, Codex CLI, and Curso
 
 ```bash
 brew tap shipshitdev/tap
-brew install --cask quotaguard
+brew install --cask meterbar
 ```
 
 To update:
 ```bash
-brew upgrade --cask quotaguard
+brew upgrade --cask meterbar
 ```
 
 ### Manual Download
 
-Download the latest release from the [Releases](https://github.com/shipshitdev/quotaguardapp/releases) page.
+Download the latest release from the [Releases](https://github.com/shipshitdev/meterbarapp/releases) page.
 
 > **Note**: Since the app isn't notarized, you may need to right-click and select "Open" the first time, or run:
 > ```bash
-> xattr -cr /Applications/QuotaGuard.app
+> xattr -cr /Applications/MeterBar.app
 > ```
 
 ### Build from Source
@@ -79,9 +79,9 @@ Download the latest release from the [Releases](https://github.com/shipshitdev/q
 Prerequisites: macOS 13.0+, Xcode 15.0+
 
 ```bash
-git clone https://github.com/shipshitdev/quotaguardapp.git
-cd quotaguardapp
-open QuotaGuard.xcodeproj
+git clone https://github.com/shipshitdev/meterbarapp.git
+cd meterbarapp
+open MeterBar.xcodeproj
 # Build and run (Cmd+R)
 ```
 
@@ -131,33 +131,33 @@ open QuotaGuard.xcodeproj
 
 ## CLI Tool
 
-Quota Guard includes a command-line tool for scripts and automation.
+MeterBar includes a command-line tool for scripts and automation.
 
 ```bash
 # Show current usage
-quotaguard usage
+meterbar usage
 
 # JSON output for scripts
-quotaguard usage --json
+meterbar usage --json
 
 # Filter by provider
-quotaguard usage --provider claude
+meterbar usage --provider claude
 
 # Show token costs (last 30 days)
-quotaguard cost
+meterbar cost
 
 # Cost for specific period
-quotaguard cost --days 7 --json
+meterbar cost --days 7 --json
 ```
 
 The CLI is automatically installed when using Homebrew. For manual installs, it's located at:
 ```
-/Applications/Quota Guard.app/Contents/Helpers/quotaguard
+/Applications/MeterBar.app/Contents/Helpers/meterbar
 ```
 
 ## How It Works
 
-Quota Guard reads authentication tokens from local files created by CLI tools:
+MeterBar reads authentication tokens from local files created by CLI tools:
 
 ```
 ~/.claude.ai/            # Claude Code OAuth

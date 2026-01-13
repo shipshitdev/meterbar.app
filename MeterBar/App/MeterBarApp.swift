@@ -2,13 +2,13 @@ import SwiftUI
 import UserNotifications
 
 @main
-struct QuotaGuardApp: App {
+struct MeterBarApp: App {
     @StateObject private var dataManager = UsageDataManager.shared
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
     init() {
         print("═══════════════════════════════════════")
-        print("🎯 QuotaGuard: App Initializing")
+        print("🎯 MeterBar: App Initializing")
         print("═══════════════════════════════════════")
     }
     
@@ -24,7 +24,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var popover: NSPopover?
     
     func applicationDidFinishLaunching(_ notification: Notification) {
-        print("🚀 QuotaGuard: Application did finish launching")
+        print("🚀 MeterBar: Application did finish launching")
         
         // Create menu bar item
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
@@ -35,7 +35,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         
         // Set up the menu bar icon
-        if let image = NSImage(systemSymbolName: "gauge.with.needle.fill", accessibilityDescription: "QuotaGuard") {
+        if let image = NSImage(systemSymbolName: "gauge.with.needle.fill", accessibilityDescription: "MeterBar") {
             image.isTemplate = true // Important for dark mode support
             button.image = image
             print("✅ Menu bar icon set successfully")
@@ -47,7 +47,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         button.action = #selector(togglePopover)
         button.target = self
-        button.toolTip = "QuotaGuard"
+        button.toolTip = "MeterBar"
         
         // Create popover
         popover = NSPopover()

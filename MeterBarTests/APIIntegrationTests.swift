@@ -1,5 +1,5 @@
 import XCTest
-@testable import QuotaGuard
+@testable import MeterBar
 
 /// Integration tests to verify API access for Claude, OpenAI, Cursor, Claude Code, and Codex CLI services.
 /// These tests make real API calls and require valid credentials to be set up.

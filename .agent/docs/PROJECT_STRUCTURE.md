@@ -1,6 +1,6 @@
 # Project Structure
 
-This document describes the structure of the Quota Guard project.
+This document describes the structure of the MeterBar project.
 
 ## Directory Layout
 
@@ -21,9 +21,9 @@ apps/ai-usage-tracker/
 │   ├── ISSUE_TEMPLATE/
 │   ├── pull_request_template.md
 │   └── CODE_OF_CONDUCT.md
-└── QuotaGuard/              # Source code
+└── MeterBar/              # Source code
     ├── App/
-    │   └── QuotaGuardApp.swift
+    │   └── MeterBarApp.swift
     ├── Models/
     │   ├── ServiceType.swift
     │   ├── UsageLimit.swift
@@ -47,7 +47,7 @@ apps/ai-usage-tracker/
 ## Key Components
 
 ### App
-- `QuotaGuardApp.swift`: Main app entry point, menu bar setup, notifications
+- `MeterBarApp.swift`: Main app entry point, menu bar setup, notifications
 
 ### Models
 - `ServiceType.swift`: Enum for supported services (Claude, Codex, Cursor)

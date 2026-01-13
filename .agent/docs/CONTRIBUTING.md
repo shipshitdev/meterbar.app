@@ -1,6 +1,6 @@
-# Contributing to Quota Guard
+# Contributing to MeterBar
 
-Thank you for your interest in contributing to Quota Guard! This document provides guidelines and instructions for contributing.
+Thank you for your interest in contributing to MeterBar! This document provides guidelines and instructions for contributing.
 
 ## Code of Conduct
 
@@ -57,11 +57,11 @@ Thank you for your interest in contributing to Quota Guard! This document provid
 
 2. Open in Xcode:
    ```bash
-   open QuotaGuard.xcodeproj
+   open MeterBar.xcodeproj
    ```
 
 3. Build and run:
-   - Select the `QuotaGuard` scheme
+   - Select the `MeterBar` scheme
    - Press Cmd+R to build and run
 
 ## Coding Standards

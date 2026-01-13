@@ -1,5 +1,5 @@
 import XCTest
-@testable import QuotaGuard
+@testable import MeterBar
 
 final class UsageLimitTests: XCTestCase {
     func testPercentageAndRemainingValues() {
