@@ -23,7 +23,7 @@ struct MenuBarView: View {
         VStack(spacing: 0) {
             // Header
             HStack {
-                Text("Quota Guard")
+                Text("MeterBar")
                     .font(.headline)
                 Spacer()
                 Button(action: {
