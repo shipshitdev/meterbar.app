@@ -75,7 +75,7 @@ A lightweight macOS menu bar app that monitors Claude Code, Codex CLI, and Curso
 
 ### Pre-built Binary
 
-Download the latest release from the [Releases](releases) page.
+Download the latest release from the [Releases](https://github.com/shipshitdev/quotaguardapp/releases) page.
 
 > **Note**: Since the app isn't notarized, you may need to right-click and select "Open" the first time, or allow it in System Settings > Privacy & Security.
 
