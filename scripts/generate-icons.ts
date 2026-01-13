@@ -124,9 +124,6 @@ function createAppIconSvg(size: number): string {
 	const y2 = y1 + spacing;
 	const y3 = y2 + spacing;
 
-	const bgPadding = Math.round(size * 0.0625);
-	const bgSize = Math.round(size * 0.875);
-
 	return `
 <!DOCTYPE html>
 <html>
@@ -136,7 +133,7 @@ function createAppIconSvg(size: number): string {
     html, body {
       width: ${size}px;
       height: ${size}px;
-      background: transparent !important;
+      background: #0f0f1a !important;
       overflow: hidden;
     }
   </style>
@@ -148,24 +145,21 @@ function createAppIconSvg(size: number): string {
         <stop offset="0%" stop-color="#1a1a2e"/>
         <stop offset="100%" stop-color="#0f0f1a"/>
       </linearGradient>
-      <!-- Green gradient for low usage -->
       <linearGradient id="barGreen" x1="0%" y1="0%" x2="100%" y2="0%">
         <stop offset="0%" stop-color="#22c55e"/>
         <stop offset="100%" stop-color="#4ade80"/>
       </linearGradient>
-      <!-- Yellow/Orange gradient for medium usage -->
       <linearGradient id="barYellow" x1="0%" y1="0%" x2="100%" y2="0%">
         <stop offset="0%" stop-color="#f59e0b"/>
         <stop offset="100%" stop-color="#fbbf24"/>
       </linearGradient>
-      <!-- Red gradient for high usage -->
       <linearGradient id="barRed" x1="0%" y1="0%" x2="100%" y2="0%">
         <stop offset="0%" stop-color="#ef4444"/>
         <stop offset="100%" stop-color="#f87171"/>
       </linearGradient>
     </defs>
-    <!-- Background -->
-    <rect x="${bgPadding}" y="${bgPadding}" width="${bgSize}" height="${bgSize}" rx="${bgRadius}" fill="url(#bg)"/>
+    <!-- Full background fill -->
+    <rect x="0" y="0" width="${size}" height="${size}" fill="url(#bg)"/>
     <!-- Bar 1: Low usage (Green) -->
     <rect x="${margin}" y="${y1}" width="${barWidth}" height="${barHeight}" rx="${barRadius}" fill="#2a2a4a"/>
     <rect x="${margin}" y="${y1}" width="${bar1Width}" height="${barHeight}" rx="${barRadius}" fill="url(#barGreen)"/>

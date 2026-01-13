@@ -144,7 +144,7 @@ struct UsageMetrics: Codable, Identifiable {
 class SharedDataStore {
     static let shared = SharedDataStore()
 
-    private let appGroupIdentifier = "group.dev.shipshit.quotaguard"
+    private let appGroupIdentifier = "group.dev.shipshit.meterbar"
     private let metricsKey = "cached_usage_metrics"
 
     private var containerURL: URL? {
@@ -189,8 +189,8 @@ struct UsageWidget: Widget {
         StaticConfiguration(kind: kind, provider: UsageWidgetProvider()) { entry in
             UsageWidgetEntryView(entry: entry)
         }
-        .configurationDisplayName("Quota Guard")
-        .description("Track your Claude and OpenAI API usage")
+        .configurationDisplayName("MeterBar")
+        .description("Track your AI coding assistant usage limits")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
     }
 }

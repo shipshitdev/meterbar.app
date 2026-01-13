@@ -34,16 +34,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
         
-        // Set up the menu bar icon
-        if let image = NSImage(systemSymbolName: "gauge.with.needle.fill", accessibilityDescription: "MeterBar") {
-            image.isTemplate = true // Important for dark mode support
-            button.image = image
-            print("✅ Menu bar icon set successfully")
-        } else {
-            print("❌ Failed to create system symbol image")
-            // Fallback to a simple text or emoji
-            button.title = "📊"
-        }
+        // Set up the menu bar icon with 3 progress bars
+        let image = createMenuBarIcon()
+        image.isTemplate = true
+        button.image = image
         
         button.action = #selector(togglePopover)
         button.target = self
@@ -140,14 +134,41 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         content.title = title
         content.body = body
         content.sound = .default
-        
+
         let request = UNNotificationRequest(
             identifier: UUID().uuidString,
             content: content,
             trigger: nil
         )
-        
+
         UNUserNotificationCenter.current().add(request)
+    }
+
+    private func createMenuBarIcon() -> NSImage {
+        let size = NSSize(width: 18, height: 18)
+        let image = NSImage(size: size, flipped: false) { rect in
+            let barHeight: CGFloat = 3
+            let barSpacing: CGFloat = 2
+            let cornerRadius: CGFloat = 1.5
+
+            // Three bars with different widths (like progress indicators)
+            let barWidths: [CGFloat] = [0.35, 0.55, 0.85] // 35%, 55%, 85%
+            let totalBarsHeight = (barHeight * 3) + (barSpacing * 2)
+            let startY = (rect.height - totalBarsHeight) / 2
+
+            for (index, fillPercent) in barWidths.enumerated() {
+                let y = startY + CGFloat(index) * (barHeight + barSpacing)
+                let barWidth = rect.width * fillPercent
+
+                let barRect = NSRect(x: 0, y: y, width: barWidth, height: barHeight)
+                let path = NSBezierPath(roundedRect: barRect, xRadius: cornerRadius, yRadius: cornerRadius)
+                NSColor.black.setFill()
+                path.fill()
+            }
+            return true
+        }
+        image.isTemplate = true
+        return image
     }
 }
 
