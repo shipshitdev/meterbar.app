@@ -47,3 +47,20 @@ struct CostSummary {
         String(format: "$%.2f/day", averageDailyCost)
     }
 }
+
+struct LocalUsageSummary {
+    let provider: ServiceType
+    let inputTokens: Int
+    let outputTokens: Int
+    let cachedInputTokens: Int
+    let reasoningTokens: Int
+    let totalTokens: Int
+    let sessionCount: Int
+    let periodDays: Int
+
+    var formattedTokens: String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter.string(from: NSNumber(value: totalTokens)) ?? "\(totalTokens)"
+    }
+}

@@ -1,15 +1,13 @@
-import Foundation
-import AppKit
 import Combine
+import Foundation
 
 class ClaudeCodeLocalService: ObservableObject {
     static let shared = ClaudeCodeLocalService()
 
     // Working endpoint (discovered via testing)
     private let usageEndpoint = "https://api.anthropic.com/api/oauth/usage"
-
-    private let baseURL = "https://api.anthropic.com"
     private let keychainService = "Claude Code-credentials"
+    private let credentialCacheTTL: TimeInterval = 300
 
     // URLSession with timeout configuration
     private lazy var urlSession: URLSession = {
@@ -25,9 +23,11 @@ class ClaudeCodeLocalService: ObservableObject {
     @Published private(set) var rateLimitTier: String?
     @Published private(set) var lastError: ServiceError?
 
+    private var cachedCredentials: ClaudeCodeCredentials?
+    private var credentialsLoadedAt: Date?
+
     private init() {
-        // Check if we have Claude Code credentials on init
-        if let _ = getOAuthToken() {
+        if getOAuthToken() != nil {
             hasAccess = true
         }
     }
@@ -35,7 +35,15 @@ class ClaudeCodeLocalService: ObservableObject {
     // MARK: - Keychain Access
 
     /// Get OAuth token from Claude Code's keychain storage
-    func getOAuthToken() -> String? {
+    func getOAuthToken(forceRefresh: Bool = false) -> String? {
+        if !forceRefresh,
+           let credentials = cachedCredentials,
+           let loadedAt = credentialsLoadedAt,
+           Date().timeIntervalSince(loadedAt) < credentialCacheTTL {
+            apply(credentials: credentials)
+            return credentials.claudeAiOauth.accessToken
+        }
+
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: keychainService,
@@ -58,19 +66,16 @@ class ClaudeCodeLocalService: ObservableObject {
             return nil
         }
 
-        // Update subscription info
-        DispatchQueue.main.async {
-            self.subscriptionType = credentials.claudeAiOauth.subscriptionType
-            self.rateLimitTier = credentials.claudeAiOauth.rateLimitTier
-            self.hasAccess = true
-        }
+        cachedCredentials = credentials
+        credentialsLoadedAt = Date()
+        apply(credentials: credentials)
 
         return credentials.claudeAiOauth.accessToken
     }
 
     /// Check and update access status
-    func checkAccess() {
-        if let _ = getOAuthToken() {
+    func checkAccess(forceRefresh: Bool = false) {
+        if getOAuthToken(forceRefresh: forceRefresh) != nil {
             hasAccess = true
         } else {
             hasAccess = false
@@ -115,6 +120,8 @@ class ClaudeCodeLocalService: ObservableObject {
                     self.hasAccess = false
                     self.lastError = ServiceError.notAuthenticated
                 }
+                cachedCredentials = nil
+                credentialsLoadedAt = nil
                 throw ServiceError.notAuthenticated
             }
 
@@ -182,6 +189,14 @@ class ClaudeCodeLocalService: ObservableObject {
             let serviceError = ServiceError.parsingError
             await MainActor.run { self.lastError = serviceError }
             throw serviceError
+        }
+    }
+
+    private func apply(credentials: ClaudeCodeCredentials) {
+        DispatchQueue.main.async {
+            self.subscriptionType = credentials.claudeAiOauth.subscriptionType
+            self.rateLimitTier = credentials.claudeAiOauth.rateLimitTier
+            self.hasAccess = true
         }
     }
 }

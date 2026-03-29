@@ -5,8 +5,15 @@ struct SettingsView: View {
     @StateObject private var authManager = AuthenticationManager.shared
     @StateObject private var dataManager = UsageDataManager.shared
     @StateObject private var claudeCodeService = ClaudeCodeLocalService.shared
+    @StateObject private var codexCliService = CodexCliLocalService.shared
     @StateObject private var cursorService = CursorLocalService.shared
     @StateObject private var costTracker = CostTracker.shared
+
+    @AppStorage("showClaudeProvider") private var showClaudeProvider: Bool = true
+    @AppStorage("showCodexProvider") private var showCodexProvider: Bool = true
+    @AppStorage("showCursorProvider") private var showCursorProvider: Bool = true
+    @AppStorage("showOverviewTab") private var showOverviewTab: Bool = true
+    @AppStorage("statusItemIconMode") private var statusItemIconMode: String = "usageBars"
 
     @State private var claudeAdminKey: String = ""
     @State private var openaiAdminKey: String = ""
@@ -16,7 +23,153 @@ struct SettingsView: View {
 
     var body: some View {
         Form {
-            Section("Claude (Anthropic)") {
+            Section("Recommended Setup") {
+                Text("MeterBar works best with your existing local sign-ins. Claude Code, Codex CLI, and Cursor are read from credentials those tools already manage on your Mac.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+
+                Text("Admin API keys below are optional and only used for direct API-based usage endpoints.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+
+            Section("Menu Bar") {
+                Toggle("Show Overview tab", isOn: $showOverviewTab)
+                Toggle("Show Codex", isOn: $showCodexProvider)
+                Toggle("Show Claude", isOn: $showClaudeProvider)
+                Toggle("Show Cursor", isOn: $showCursorProvider)
+
+                Picker("Status item icon", selection: $statusItemIconMode) {
+                    Text("Usage bars").tag("usageBars")
+                    Text("Provider dots").tag("providerDots")
+                    Text("Template").tag("template")
+                }
+            }
+
+            Section("Claude Code (Recommended)") {
+                HStack {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(claudeCodeService.hasAccess ? .green : .gray)
+                    Text(claudeCodeService.hasAccess ? "Connected" : "Not Connected")
+                }
+
+                if claudeCodeService.hasAccess {
+                    if let subscriptionType = claudeCodeService.subscriptionType {
+                        HStack {
+                            Text("Plan:")
+                                .foregroundColor(.secondary)
+                            Text(subscriptionType.capitalized)
+                                .bold()
+                        }
+                        .font(.caption)
+                    }
+
+                    if let rateLimitTier = claudeCodeService.rateLimitTier {
+                        HStack {
+                            Text("Tier:")
+                                .foregroundColor(.secondary)
+                            Text(rateLimitTier.replacingOccurrences(of: "_", with: " ").capitalized)
+                        }
+                        .font(.caption)
+                    }
+
+                    Button("Refresh Status") {
+                        claudeCodeService.checkAccess(forceRefresh: true)
+                        Task {
+                            await dataManager.refreshAll()
+                        }
+                    }
+                } else {
+                    Text("Automatically reads Claude Code CLI credentials from macOS Keychain.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+
+                    Text("Log in to Claude Code CLI first: run 'claude' in Terminal")
+                        .font(.caption)
+                        .foregroundColor(.orange)
+
+                    Button("Check Again") {
+                        claudeCodeService.checkAccess(forceRefresh: true)
+                        if claudeCodeService.hasAccess {
+                            Task {
+                                await dataManager.refreshAll()
+                            }
+                        }
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+            }
+
+            Section("Codex CLI (Recommended)") {
+                HStack {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(codexCliService.hasAccess ? .green : .gray)
+                    Text(codexCliService.hasAccess ? "Connected" : "Not Connected")
+                }
+
+                Text("Automatically reads `~/.codex/auth.json`. No browser cookie import.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+
+                Text("Log in first: run 'codex login' in Terminal")
+                    .font(.caption)
+                    .foregroundColor(.orange)
+
+                Button("Refresh Status") {
+                    codexCliService.checkAccess()
+                    Task {
+                        await dataManager.refreshAll()
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+            }
+
+            Section("Cursor (Recommended)") {
+                HStack {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(cursorService.hasAccess ? .green : .gray)
+                    Text(cursorService.hasAccess ? "Connected" : "Not Connected")
+                }
+
+                if cursorService.hasAccess {
+                    if let subscriptionType = cursorService.subscriptionType {
+                        HStack {
+                            Text("Plan:")
+                                .foregroundColor(.secondary)
+                            Text(subscriptionType.capitalized)
+                                .bold()
+                        }
+                        .font(.caption)
+                    }
+
+                    Button("Refresh Status") {
+                        cursorService.checkAccess()
+                        Task {
+                            await dataManager.refreshAll()
+                        }
+                    }
+                } else {
+                    Text("Automatically reads Cursor IDE credentials from Cursor's local database.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+
+                    Text("Log in to Cursor first, then refresh here")
+                        .font(.caption)
+                        .foregroundColor(.orange)
+
+                    Button("Check Again") {
+                        cursorService.checkAccess(forceRescan: true)
+                        if cursorService.hasAccess {
+                            Task {
+                                await dataManager.refreshAll()
+                            }
+                        }
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+            }
+
+            Section("Claude Admin API (Optional)") {
                 HStack {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundColor(authManager.isClaudeAuthenticated ? .green : .gray)
@@ -46,61 +199,7 @@ struct SettingsView: View {
                 .buttonStyle(.link)
             }
 
-            Section("Claude Code (Pro/Max)") {
-                HStack {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(claudeCodeService.hasAccess ? .green : .gray)
-                    Text(claudeCodeService.hasAccess ? "Connected" : "Not Connected")
-                }
-
-                if claudeCodeService.hasAccess {
-                    if let subscriptionType = claudeCodeService.subscriptionType {
-                        HStack {
-                            Text("Plan:")
-                                .foregroundColor(.secondary)
-                            Text(subscriptionType.capitalized)
-                                .bold()
-                        }
-                        .font(.caption)
-                    }
-
-                    if let rateLimitTier = claudeCodeService.rateLimitTier {
-                        HStack {
-                            Text("Tier:")
-                                .foregroundColor(.secondary)
-                            Text(rateLimitTier.replacingOccurrences(of: "_", with: " ").capitalized)
-                        }
-                        .font(.caption)
-                    }
-
-                    Button("Refresh Status") {
-                        claudeCodeService.checkAccess()
-                        Task {
-                            await dataManager.refreshAll()
-                        }
-                    }
-                } else {
-                    Text("Automatically reads Claude Code CLI credentials from macOS Keychain.")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-
-                    Text("Log in to Claude Code CLI first: run 'claude' in terminal")
-                        .font(.caption)
-                        .foregroundColor(.orange)
-
-                    Button("Check Again") {
-                        claudeCodeService.checkAccess()
-                        if claudeCodeService.hasAccess {
-                            Task {
-                                await dataManager.refreshAll()
-                            }
-                        }
-                    }
-                    .buttonStyle(.borderedProminent)
-                }
-            }
-
-            Section("OpenAI") {
+            Section("OpenAI Admin API (Optional)") {
                 HStack {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundColor(authManager.isOpenAIAuthenticated ? .green : .gray)
@@ -128,52 +227,6 @@ struct SettingsView: View {
                     showingOpenAIHelp = true
                 }
                 .buttonStyle(.link)
-            }
-
-            Section("Cursor") {
-                HStack {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(cursorService.hasAccess ? .green : .gray)
-                    Text(cursorService.hasAccess ? "Connected" : "Not Connected")
-                }
-
-                if cursorService.hasAccess {
-                    if let subscriptionType = cursorService.subscriptionType {
-                        HStack {
-                            Text("Plan:")
-                                .foregroundColor(.secondary)
-                            Text(subscriptionType.capitalized)
-                                .bold()
-                        }
-                        .font(.caption)
-                    }
-
-                    Button("Refresh Status") {
-                        cursorService.checkAccess()
-                        Task {
-                            await dataManager.refreshAll()
-                        }
-                    }
-                } else {
-                    Text("Automatically reads Cursor IDE credentials from macOS Keychain.")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-
-                    Text("Log in to Cursor IDE first: open Cursor and sign in to your account")
-                        .font(.caption)
-                        .foregroundColor(.orange)
-
-                    Button("Check Again") {
-                        // Force a rescan of all possible database paths
-                        cursorService.checkAccess(forceRescan: true)
-                        if cursorService.hasAccess {
-                            Task {
-                                await dataManager.refreshAll()
-                            }
-                        }
-                    }
-                    .buttonStyle(.borderedProminent)
-                }
             }
 
             Section("Cost Tracking (Last 30 Days)") {
@@ -223,6 +276,24 @@ struct SettingsView: View {
                             Text("Last scanned: \(lastScan, style: .relative) ago")
                                 .font(.caption2)
                                 .foregroundColor(.secondary)
+                        }
+
+                        if let codexUsage = costTracker.codexUsageSummary {
+                            Divider()
+
+                            HStack {
+                                Text("Codex local usage")
+                                Spacer()
+                                Text(codexUsage.formattedTokens)
+                                    .bold()
+                            }
+
+                            HStack {
+                                Text("Codex sessions")
+                                Spacer()
+                                Text("\(codexUsage.sessionCount)")
+                                    .foregroundColor(.secondary)
+                            }
                         }
                     }
                 } else {

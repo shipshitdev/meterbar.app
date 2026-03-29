@@ -6,6 +6,7 @@ class CostTracker: ObservableObject {
     static let shared = CostTracker()
 
     @Published var costSummary: CostSummary?
+    @Published var codexUsageSummary: LocalUsageSummary?
     @Published var isScanning: Bool = false
     @Published var lastScanDate: Date?
 
@@ -30,6 +31,8 @@ class CostTracker: ObservableObject {
         if let claudeCost = await scanClaudeCodeSessions(since: cutoffDate) {
             allCosts.append(claudeCost)
         }
+
+        codexUsageSummary = scanCodexSessions(since: cutoffDate, days: days)
 
         // Calculate summary
         let totalCost = allCosts.reduce(0) { $0 + $1.estimatedCostUSD }
@@ -103,7 +106,6 @@ class CostTracker: ObservableObject {
                 }
             }
         } catch {
-            print("Error scanning Claude sessions: \(error)")
             return nil
         }
 
@@ -188,6 +190,114 @@ class CostTracker: ObservableObject {
         let cacheCreationCost = Double(cacheCreation) / 1_000_000 * pricing.cacheCreation
         let cacheReadCost = Double(cacheRead) / 1_000_000 * pricing.cacheRead
         return inputCost + outputCost + cacheCreationCost + cacheReadCost
+    }
+
+    private func scanCodexSessions(since cutoffDate: Date, days: Int) -> LocalUsageSummary? {
+        let homeDirectory = FileManager.default.homeDirectoryForCurrentUser
+        let baseDirectories = [
+            homeDirectory.appendingPathComponent(".codex/sessions"),
+            homeDirectory.appendingPathComponent(".codex/archived_sessions"),
+        ]
+
+        var totalInput = 0
+        var totalOutput = 0
+        var totalCachedInput = 0
+        var totalReasoning = 0
+        var totalTokens = 0
+        var sessionCount = 0
+
+        for baseDirectory in baseDirectories where FileManager.default.fileExists(atPath: baseDirectory.path) {
+            guard let enumerator = FileManager.default.enumerator(
+                at: baseDirectory,
+                includingPropertiesForKeys: [.contentModificationDateKey],
+                options: [.skipsHiddenFiles]
+            ) else {
+                continue
+            }
+
+            for case let fileURL as URL in enumerator {
+                guard ["jsonl", "json"].contains(fileURL.pathExtension) else {
+                    continue
+                }
+
+                guard let values = try? fileURL.resourceValues(forKeys: [.contentModificationDateKey]),
+                      let modifiedAt = values.contentModificationDate,
+                      modifiedAt >= cutoffDate else {
+                    continue
+                }
+
+                if let usage = parseCodexSessionFile(at: fileURL), usage.totalTokens > 0 {
+                    totalInput += usage.inputTokens
+                    totalOutput += usage.outputTokens
+                    totalCachedInput += usage.cachedInputTokens
+                    totalReasoning += usage.reasoningTokens
+                    totalTokens += usage.totalTokens
+                    sessionCount += 1
+                }
+            }
+        }
+
+        guard totalTokens > 0 else {
+            return nil
+        }
+
+        return LocalUsageSummary(
+            provider: .codexCli,
+            inputTokens: totalInput,
+            outputTokens: totalOutput,
+            cachedInputTokens: totalCachedInput,
+            reasoningTokens: totalReasoning,
+            totalTokens: totalTokens,
+            sessionCount: sessionCount,
+            periodDays: days
+        )
+    }
+
+    private func parseCodexSessionFile(at url: URL) -> LocalUsageSummary? {
+        guard url.pathExtension == "jsonl",
+              let data = try? Data(contentsOf: url),
+              let content = String(data: data, encoding: .utf8) else {
+            return nil
+        }
+
+        var latestTotals: (input: Int, output: Int, cached: Int, reasoning: Int, total: Int)?
+
+        for line in content.components(separatedBy: .newlines) where !line.isEmpty {
+            guard let lineData = line.data(using: .utf8),
+                  let json = try? JSONSerialization.jsonObject(with: lineData) as? [String: Any],
+                  let type = json["type"] as? String,
+                  type == "event_msg",
+                  let payload = json["payload"] as? [String: Any],
+                  let payloadType = payload["type"] as? String,
+                  payloadType == "token_count",
+                  let info = payload["info"] as? [String: Any],
+                  let totals = info["total_token_usage"] as? [String: Any] else {
+                continue
+            }
+
+            latestTotals = (
+                input: totals["input_tokens"] as? Int ?? 0,
+                output: totals["output_tokens"] as? Int ?? 0,
+                cached: totals["cached_input_tokens"] as? Int ?? 0,
+                reasoning: totals["reasoning_output_tokens"] as? Int ?? 0,
+                total: totals["total_tokens"] as? Int ?? 0
+            )
+        }
+
+        guard let latestTotals else {
+            return nil
+        }
+
+        return LocalUsageSummary(
+            provider: .codexCli,
+            inputTokens: latestTotals.input,
+            outputTokens: latestTotals.output,
+            cachedInputTokens: latestTotals.cached,
+            reasoningTokens: latestTotals.reasoning,
+            totalTokens: latestTotals.total,
+            sessionCount: 1,
+            periodDays: 0
+        )
     }
 }
 

@@ -138,7 +138,7 @@ enum ServiceError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .notAuthenticated:
-            return "Not authenticated. Please set up your Admin API key in settings."
+            return "Not authenticated. Sign in with the CLI or configure an API key in Settings."
         case .invalidURL:
             return "Invalid URL"
         case .apiError(let message):

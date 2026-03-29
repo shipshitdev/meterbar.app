@@ -13,8 +13,8 @@ enum ServiceType: String, Codable, CaseIterable, Identifiable {
         switch self {
         case .claude: return "Claude API"
         case .claudeCode: return "Claude Code"
-        case .openai: return "OpenAI"
-        case .codexCli: return "OpenAI Codex"
+        case .openai: return "OpenAI API"
+        case .codexCli: return "Codex"
         case .cursor: return "Cursor"
         }
     }

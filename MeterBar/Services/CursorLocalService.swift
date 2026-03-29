@@ -68,14 +68,12 @@ class CursorLocalService: ObservableObject {
         // Check each path
         for path in pathsToCheck {
             if fileManager.fileExists(atPath: path) {
-                print("[CursorLocalService] Found database at: \(path)")
                 return path
             }
         }
         
         // If not found and forceRescan is true, search recursively in Cursor directories
         if forceRescan {
-            print("[CursorLocalService] Primary paths not found, scanning Cursor directories...")
             let cursorBasePaths = [
                 "\(homeDir)/Library/Application Support/Cursor",
                 "\(homeDir)/.config/Cursor"
@@ -83,19 +81,11 @@ class CursorLocalService: ObservableObject {
             
             for basePath in cursorBasePaths {
                 if let foundPath = findDatabaseRecursively(in: basePath, filename: "state.vscdb") {
-                    print("[CursorLocalService] Found database via recursive search at: \(foundPath)")
                     return foundPath
                 }
             }
         }
-        
-        // Log all checked paths for debugging
-        print("[CursorLocalService] Database not found. Checked paths:")
-        for path in pathsToCheck {
-            let exists = fileManager.fileExists(atPath: path)
-            print("[CursorLocalService]   \(exists ? "✓" : "✗") \(path)")
-        }
-        
+
         return nil
     }
     
@@ -124,9 +114,6 @@ class CursorLocalService: ObservableObject {
     /// - Parameter forceRescan: If true, will recursively search for database if not found in primary paths
     func getAccessTokenFromDatabase(forceRescan: Bool = false) -> (userId: String, token: String)? {
         guard let dbPath = getCursorDatabasePath(forceRescan: forceRescan) else {
-            if forceRescan {
-                print("[CursorLocalService] Database not found after rescanning all paths")
-            }
             // Database not found - Cursor may not be installed, which is okay
             // Don't print error on init, only when actively trying to fetch
             return nil
@@ -135,14 +122,12 @@ class CursorLocalService: ObservableObject {
         // Verify file exists and is readable before attempting to open
         let isReadable = FileManager.default.isReadableFile(atPath: dbPath)
         if !isReadable {
-            print("[CursorLocalService] Database file not readable (sandbox blocking access)")
             return nil
         }
 
         var db: OpaquePointer?
         let result = sqlite3_open_v2(dbPath, &db, SQLITE_OPEN_READONLY, nil)
         guard result == SQLITE_OK else {
-            print("[CursorLocalService] SQLite open failed: \(result) - \(String(cString: sqlite3_errmsg(db)))")
             sqlite3_close(db)
             return nil
         }
@@ -152,18 +137,15 @@ class CursorLocalService: ObservableObject {
         var statement: OpaquePointer?
 
         guard sqlite3_prepare_v2(db, query, -1, &statement, nil) == SQLITE_OK else {
-            print("[CursorLocalService] Failed to prepare query: \(String(cString: sqlite3_errmsg(db)))")
             return nil
         }
         defer { sqlite3_finalize(statement) }
 
         guard sqlite3_step(statement) == SQLITE_ROW else {
-            print("[CursorLocalService] No token found in database")
             return nil
         }
 
         guard let tokenCString = sqlite3_column_text(statement, 0) else {
-            print("[CursorLocalService] Failed to read token value")
             return nil
         }
 
@@ -171,11 +153,9 @@ class CursorLocalService: ObservableObject {
 
         // Decode JWT to extract userId from 'sub' claim
         guard let userId = extractUserIdFromJWT(token) else {
-            print("[CursorLocalService] Failed to extract userId from JWT")
             return nil
         }
 
-        print("[CursorLocalService] Successfully retrieved token for user: \(userId.prefix(8))...")
         return (userId: userId, token: token)
     }
 
@@ -224,6 +204,7 @@ class CursorLocalService: ObservableObject {
     func checkAccess(forceRescan: Bool = false) {
         if let _ = getAccessTokenFromDatabase(forceRescan: forceRescan) {
             hasAccess = true
+            lastError = nil
         } else {
             hasAccess = false
             subscriptionType = nil
@@ -240,15 +221,12 @@ class CursorLocalService: ObservableObject {
                 self.lastError = error
                 self.hasAccess = false
             }
-            print("[CursorLocalService] No access token found in database after full scan")
             throw error
         }
 
         await MainActor.run {
             self.hasAccess = true
         }
-
-        print("[CursorLocalService] Fetching usage data from Cursor API...")
 
         // Fetch usage summary data (uses /api/usage-summary endpoint)
         let summaryData = try await fetchUsageSummary(userId: userId, token: token)
@@ -277,10 +255,6 @@ class CursorLocalService: ObservableObject {
         let planUsed = Double(summaryData.individualUsage?.plan?.used ?? 0)
         let planTotal = Double(summaryData.individualUsage?.plan?.total ?? 500)
 
-        print("[CursorLocalService] Plan type: \(summaryData.membershipType ?? "unknown")")
-        print("[CursorLocalService] Plan usage: \(Int(planUsed)) / \(Int(planTotal))")
-        print("[CursorLocalService] Billing cycle end: \(summaryData.billingCycleEnd ?? "unknown")")
-
         // Create usage metrics using plan data
         let weeklyLimit = UsageLimit(
             used: planUsed,
@@ -301,8 +275,6 @@ class CursorLocalService: ObservableObject {
                 )
             }
         }
-
-        print("[CursorLocalService] Successfully fetched Cursor usage data")
 
         return UsageMetrics(
             service: .cursor,
@@ -341,15 +313,11 @@ class CursorLocalService: ObservableObject {
             request.setValue(value, forHTTPHeaderField: key)
         }
 
-        print("[CursorLocalService] Calling usage-summary endpoint")
-
         let (data, response) = try await urlSession.data(for: request)
 
         guard let httpResponse = response as? HTTPURLResponse else {
             throw ServiceError.apiError("Invalid response type")
         }
-
-        print("[CursorLocalService] Usage summary response status: \(httpResponse.statusCode)")
 
         if httpResponse.statusCode == 401 {
             await MainActor.run {
@@ -361,23 +329,14 @@ class CursorLocalService: ObservableObject {
 
         guard (200...299).contains(httpResponse.statusCode) else {
             let errorMsg = String(data: data, encoding: .utf8) ?? "Unknown error"
-            print("[CursorLocalService] Usage summary error: \(errorMsg.prefix(200))")
             throw ServiceError.apiError("HTTP \(httpResponse.statusCode): \(errorMsg.prefix(100))")
-        }
-
-        // Debug: print raw response
-        if let rawResponse = String(data: data, encoding: .utf8) {
-            print("[CursorLocalService] Raw usage-summary response: \(rawResponse.prefix(500))")
         }
 
         // Parse the response
         let decoder = JSONDecoder()
         do {
-            let summaryResponse = try decoder.decode(CursorUsageSummaryResponse.self, from: data)
-            print("[CursorLocalService] Parsed usage summary: used=\(summaryResponse.individualUsage?.plan?.used ?? 0), total=\(summaryResponse.individualUsage?.plan?.total ?? 0)")
-            return summaryResponse
+            return try decoder.decode(CursorUsageSummaryResponse.self, from: data)
         } catch {
-            print("[CursorLocalService] JSON decode error: \(error)")
             throw ServiceError.parsingError
         }
     }

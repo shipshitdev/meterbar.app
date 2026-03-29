@@ -49,7 +49,6 @@ class UsageDataManager: ObservableObject {
                 newMetrics[.claude] = metrics
             } catch {
                 lastError = error
-                print("Failed to fetch Claude metrics: \(error)")
             }
         }
 
@@ -74,7 +73,6 @@ class UsageDataManager: ObservableObject {
                 newMetrics[.openai] = metrics
             } catch {
                 lastError = error
-                print("Failed to fetch OpenAI metrics: \(error)")
             }
         }
 
@@ -85,7 +83,6 @@ class UsageDataManager: ObservableObject {
                 newMetrics[.codexCli] = metrics
             } catch {
                 lastError = error
-                print("Failed to fetch Codex CLI metrics: \(error)")
                 // Preserve cached data if available (graceful degradation)
                 if let cachedMetrics = self.metrics[.codexCli] {
                     newMetrics[.codexCli] = cachedMetrics
@@ -100,7 +97,6 @@ class UsageDataManager: ObservableObject {
                 newMetrics[.cursor] = metrics
             } catch {
                 lastError = error
-                print("Failed to fetch Cursor metrics: \(error)")
                 // Preserve cached data if available (graceful degradation)
                 if let cachedMetrics = self.metrics[.cursor] {
                     newMetrics[.cursor] = cachedMetrics

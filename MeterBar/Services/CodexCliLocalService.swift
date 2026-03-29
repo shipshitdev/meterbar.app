@@ -49,6 +49,7 @@ class CodexCliLocalService: ObservableObject {
     @Published private(set) var hasAccess: Bool = false
     @Published private(set) var lastError: ServiceError?
     @Published private(set) var subscriptionType: String?
+    @Published private(set) var credits: Credits?
 
     private init() {
         // Check if we have Codex CLI credentials on init
@@ -61,40 +62,25 @@ class CodexCliLocalService: ObservableObject {
     /// This file is created and maintained by the Codex CLI when user logs in
     func getAuthToken() -> String? {
         let path = authFilePath
-        print("[CodexCliLocalService] Reading auth file: \(path)")
 
         let fileExists = FileManager.default.fileExists(atPath: path)
-        print("[CodexCliLocalService] File exists: \(fileExists)")
 
         if !fileExists {
-            print("[CodexCliLocalService] Auth file not found at \(path)")
             return nil
         }
 
         guard let data = FileManager.default.contents(atPath: path) else {
-            print("[CodexCliLocalService] Could not read file contents (permission issue?)")
             return nil
-        }
-
-        print("[CodexCliLocalService] Read \(data.count) bytes")
-
-        // Log raw JSON for debugging
-        if let rawJson = String(data: data, encoding: .utf8) {
-            print("[CodexCliLocalService] Raw JSON (first 200 chars): \(rawJson.prefix(200))")
         }
 
         do {
             let authData = try JSONDecoder().decode(CodexAuthFile.self, from: data)
-            print("[CodexCliLocalService] Decoded auth file - tokens: \(authData.tokens != nil), accessToken: \(authData.tokens?.accessToken != nil)")
             if let token = authData.tokens?.accessToken {
-                print("[CodexCliLocalService] Access token found (length: \(token.count))")
                 return token
             } else {
-                print("[CodexCliLocalService] No access token in auth file")
                 return nil
             }
         } catch {
-            print("[CodexCliLocalService] Failed to parse auth.json: \(error)")
             return nil
         }
     }
@@ -110,11 +96,7 @@ class CodexCliLocalService: ObservableObject {
 
         do {
             let authData = try JSONDecoder().decode(CodexAuthFile.self, from: data)
-            if let accountId = authData.tokens?.accountId {
-                print("[CodexCliLocalService] Account ID found: \(accountId)")
-                return accountId
-            }
-            return nil
+            return authData.tokens?.accountId
         } catch {
             return nil
         }
@@ -125,11 +107,12 @@ class CodexCliLocalService: ObservableObject {
     func checkAccess() {
         let token = getAuthToken()
         let hasToken = token != nil
-        print("[CodexCliLocalService] checkAccess: authFile=\(authFilePath), hasToken=\(hasToken)")
         if hasToken {
             hasAccess = true
+            lastError = nil
         } else {
             hasAccess = false
+            credits = nil
         }
     }
 
@@ -159,7 +142,6 @@ class CodexCliLocalService: ObservableObject {
         // Without this header, API returns free plan data even for team accounts
         if let accountId = getAccountId() {
             request.setValue(accountId, forHTTPHeaderField: "ChatGPT-Account-Id")
-            print("[CodexCliLocalService] Using account ID: \(accountId)")
         }
 
         // Browser-like headers to avoid blocks
@@ -176,8 +158,6 @@ class CodexCliLocalService: ObservableObject {
                 throw ServiceError.apiError("Invalid response type")
             }
 
-            print("[CodexCliLocalService] Usage response status: \(httpResponse.statusCode)")
-
             if httpResponse.statusCode == 401 {
                 await MainActor.run {
                     self.hasAccess = false
@@ -188,13 +168,8 @@ class CodexCliLocalService: ObservableObject {
 
             guard (200...299).contains(httpResponse.statusCode) else {
                 let errorMessage = String(data: data, encoding: .utf8) ?? "Unknown error"
-                print("[CodexCliLocalService] Usage error: \(errorMessage.prefix(200))")
                 throw ServiceError.apiError("HTTP \(httpResponse.statusCode): \(errorMessage.prefix(100))")
             }
-
-            // Parse the response
-            let rawResponse = String(data: data, encoding: .utf8) ?? "{}"
-            print("[CodexCliLocalService] Raw response: \(rawResponse.prefix(500))")
 
             let decoder = JSONDecoder()
             // Note: Codex CLI API uses Unix timestamps (Int64), not ISO8601 dates
@@ -206,11 +181,11 @@ class CodexCliLocalService: ObservableObject {
                 self.lastError = nil
                 self.hasAccess = true
                 self.subscriptionType = usageResponse.planType
+                self.credits = usageResponse.credits
             }
 
             // Check if rate limits exist (free accounts have null rate_limit)
             guard let rateLimit = usageResponse.rateLimit else {
-                print("[CodexCliLocalService] No rate limit data (free account or no usage yet)")
                 // Return empty metrics for free accounts
                 return UsageMetrics(
                     service: .codexCli,
@@ -223,7 +198,6 @@ class CodexCliLocalService: ObservableObject {
             // Map the response to UsageMetrics
             // Primary window (5 hours = 18000 seconds) = session limit
             let primaryWindow = rateLimit.primaryWindow
-            print("[CodexCliLocalService] Primary window: usedPercent=\(primaryWindow.usedPercent), resetAt=\(primaryWindow.resetAt)")
             let sessionLimit = UsageLimit(
                 used: primaryWindow.usedPercent,
                 total: 100.0,
@@ -232,7 +206,6 @@ class CodexCliLocalService: ObservableObject {
 
             // Secondary window (7 days = 604800 seconds) = weekly limit
             let secondaryWindow = rateLimit.secondaryWindow
-            print("[CodexCliLocalService] Secondary window: usedPercent=\(secondaryWindow?.usedPercent ?? -1), resetAt=\(secondaryWindow?.resetAt ?? 0)")
             let weeklyLimit = UsageLimit(
                 used: secondaryWindow?.usedPercent ?? 0.0,
                 total: 100.0,
@@ -242,7 +215,6 @@ class CodexCliLocalService: ObservableObject {
             // Code review rate limit (7 days window) = code review limit
             var codeReviewLimit: UsageLimit? = nil
             if let codeReviewPrimary = usageResponse.codeReviewRateLimit?.primaryWindow {
-                print("[CodexCliLocalService] Code review: usedPercent=\(codeReviewPrimary.usedPercent), resetAt=\(codeReviewPrimary.resetAt)")
                 codeReviewLimit = UsageLimit(
                     used: codeReviewPrimary.usedPercent,
                     total: 100.0,
@@ -250,7 +222,6 @@ class CodexCliLocalService: ObservableObject {
                 )
             }
 
-            print("[CodexCliLocalService] Final metrics: session=\(sessionLimit.percentage)%, weekly=\(weeklyLimit.percentage)%, codeReview=\(codeReviewLimit?.percentage ?? -1)%")
             return UsageMetrics(
                 service: .codexCli,
                 sessionLimit: sessionLimit,
@@ -275,13 +246,7 @@ class CodexCliLocalService: ObservableObject {
         } catch let error as ServiceError {
             throw error
         } catch let decodingError as DecodingError {
-            print("[CodexCliLocalService] Decoding error: \(decodingError)")
-            // If decoding fails, the API structure might be different
-            // Log the raw response for debugging
-            if let data = try? Data(contentsOf: URL(string: usageEndpoint)!) {
-                let rawResponse = String(data: data, encoding: .utf8) ?? "{}"
-                print("[CodexCliLocalService] Failed to decode response. Raw JSON: \(rawResponse)")
-            }
+            _ = decodingError
             let serviceError = ServiceError.parsingError
             await MainActor.run { self.lastError = serviceError }
             throw serviceError
